@@ -50,6 +50,13 @@ I should be able to teleport out of a maze with the medal.<br>
 I should be able to quit and come back to the state I left the game in.<br>
 I should be able to add all medals by commands, and then hence get to end credits.<br>
 
+
+Story 2
+
+The user will get into the program.<br>
+They will pick a maze one of 1 or 2.<br>
+They will go through the maze using provided inputs.<br>
+Once they are done the program will end.
 <br>
 *I will  add more based on program completion and completion of stretch goals.*
 
