@@ -164,13 +164,13 @@ public class Maze extends Throwable {
 
     private void applyMove(String inp) {
         if (inp.equalsIgnoreCase("Up")) {
-            player.moveY(-1);
+            user.moveY(-1);
         } else if (inp.equalsIgnoreCase("Down")) {
-            player.moveY(1);
+            user.moveY(1);
         } else if (inp.equalsIgnoreCase("Right")) {
-            player.moveX(1);
+            user.moveX(1);
         } else {
-            player.moveX(-1);
+            user.moveX(-1);
         }
     }
 
