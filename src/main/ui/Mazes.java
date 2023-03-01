@@ -29,35 +29,29 @@ public class Mazes {
         Maze mazeTemp;
         int temp;
         Mazes mazeRef;
-        System.out.println(arrangement);
         for (int i = 0; i < 6; i++) {
             do {
                 temp = rand.nextInt(6);
             } while (arrangement.contains(temp));
             arrangement.add(temp);
         }
-
-        System.out.println(arrangement);
-
         for (int i = 0; i < arrangement.size(); i++) {
             temp = arrangement.get(i);
             mazeTemp = new Maze(temp);
             mazes.add(mazeTemp);
         }
-        System.out.println(mazes);
     }
 
-
-
     private void constantRun() {
-        int index;
-        do {
-            for (int i = 0; i < mazes.size(); i++) {
-                if (mazes.get(i).isNotMaze()) {
-                    mazes.get(i).solved();
-                }
-            }
 
+        int index;
+        for (int i = 0; i < mazes.size(); i++) {
+            if (mazes.get(i).isNotMaze()) {
+                mazes.get(i).solved();
+            }
+        }
+
+        do {
             int inp;
             do {
                 System.out.println("Which maze would you like to enter [1-6] by order of increasing difficulty:");
@@ -68,14 +62,20 @@ public class Mazes {
             index = arrangement.indexOf(inp);
 
             mazes.get(index).initializePlayer();
-            mazes.get(index).play();
+            mazes.get(index).checkPlay();
 
         } while (checkAllSolved());//checks if all mazes are solved.
+        System.out.println("Congratulations, all mazes have been completed.");
     }
 
     //Will change to accommodate how many mazes actually have a maze in them.
     private boolean checkInp(int inp) {
-        return (!((inp == 1) || (inp == 2)));
+        if ((inp > 0) && (inp < 7)) {
+            return false;
+        } else {
+            System.out.println("Input outside specified range.");
+            return true;
+        }
     }
 
     private boolean checkAllSolved() {
@@ -86,9 +86,9 @@ public class Mazes {
             }
         }
         if (solvedCount == arrangement.size()) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 

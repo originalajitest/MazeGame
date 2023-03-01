@@ -9,10 +9,10 @@ public class Maze extends Throwable {
     private Player user;
 
     //Store the start point and the end point of the maze;
-    private Integer startX;
     private Integer startY;
-    private Integer endX;
+    private Integer startX;
     private Integer endY;
+    private Integer endX;
 
     private boolean solved;
     private boolean solvedOnce;
@@ -78,12 +78,12 @@ public class Maze extends Throwable {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
                 if (maze[i][j] == null) {
-                    if (startX == null) {
-                        startX = i;
-                        startY = j;
+                    if (startY == null) {
+                        startX = j;
+                        startY = i;
                     } else {
-                        endX = i;
-                        endY = j;
+                        endX = j;
+                        endY = i;
                     }
                     this.maze[i][j] = "T";
                 }
@@ -95,9 +95,9 @@ public class Maze extends Throwable {
     public void printMaze() {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
-                if (i == startX && j == startY) {
+                if (j == startX && i == startY) {
                     System.out.print("S ");
-                } else if (i == endX && j == endY) {
+                } else if (j == endX && i == endY) {
                     System.out.print("E ");
                 } else if (maze[i][j] == "T") {
                     System.out.print("  ");
@@ -126,26 +126,46 @@ public class Maze extends Throwable {
         return solved;
     }
 
-    public void play() {
+    public void checkPlay() {
+        if (solved == true) {
+            System.out.println("This maze has been solved");
+        } else {
+            play();
+        }
+    }
+
+    private void play() {
         String move;
+        printMazeWPlayer();
         do {
-            printMazeWPlayer();
             do {
-                System.out.println("Enter a move (Up, Down, Right Left):");
-                move = sc.next();
-            } while (validInp(move));
+                do {
+                    System.out.println("Enter a move (Up, Down, Right, Left):");
+                    move = sc.next();
+                } while (validInp(move));
+            } while (possibleMove(move));
+
             applyMove(move);
-        } while ((user.getX() == endX) && (user.getY() == endY));
+            printMazeWPlayer();
+        } while (!((user.getX() == endY) && (user.getY() == endX)));
+        solved = true;
+        solvedOnce = true;
+        System.out.println("To be able to do this maze again enter (Again):");
+        String again = sc.next();
+        if (again.equalsIgnoreCase("Again")) {
+            solved = false;
+            initializePlayer();
+        }
     }
 
     private void printMazeWPlayer() {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
-                if ((i == user.getX()) && (j == user.getY())) {
+                if ((j == user.getX()) && (i == user.getY())) {
                     System.out.print("P ");
-                } else if (i == startX && j == startY) {
+                } else if (j == startX && i == startY) {
                     System.out.print("S ");
-                } else if (i == endX && j == endY) {
+                } else if (j == endX && i == endY) {
                     System.out.print("E ");
                 } else if (maze[i][j] == "T") {
                     System.out.print("  ");
@@ -158,7 +178,7 @@ public class Maze extends Throwable {
     }
 
     private boolean validInp(String inp) {
-        return (inp.equalsIgnoreCase("Up") || inp.equalsIgnoreCase("Down")
+        return !(inp.equalsIgnoreCase("Up") || inp.equalsIgnoreCase("Down")
                 || inp.equalsIgnoreCase("Right") || inp.equalsIgnoreCase("Left"));//!!!
     }
 
@@ -171,6 +191,48 @@ public class Maze extends Throwable {
             user.moveX(1);
         } else {
             user.moveX(-1);
+        }
+    }
+
+    private boolean possibleMove(String inp) {
+        if (inp.equalsIgnoreCase("Up")) {
+            return landingOkY(user.getX(), (user.getY() - 1));
+        } else if (inp.equalsIgnoreCase("Down")) {
+            return landingOkY(user.getX(), (user.getY() + 1));
+        } else if (inp.equalsIgnoreCase("Right")) {
+            return landingOkX((user.getX() + 1), user.getY());
+        } else {
+            return landingOkX((user.getX() - 1), user.getY());
+        }
+    }
+
+    private boolean landingOkY(int j, int i) {
+        if (i < 0 || i >= maze.length) {
+            System.out.println("Invalid Move");
+            return true;
+        } else if (maze[i][j] == "T") {
+            return false;
+        } else if (maze[i][j] == "F") {
+            System.out.println("Invalid Move");
+            return true;
+        } else {
+            System.out.println("Invalid Move");
+            return true;
+        }
+    }
+
+    private boolean landingOkX(int j, int i) {
+        if (j < 0 || j >= maze[0].length) {
+            System.out.println("Invalid Move");
+            return true;
+        } else if (maze[i][j] == "T") {
+            return false;
+        } else if (maze[i][j] == "F") {
+            System.out.println("Invalid Move");
+            return true;
+        } else {
+            System.out.println("Invalid Move");
+            return true;
         }
     }
 
