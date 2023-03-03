@@ -55,7 +55,7 @@ public class Mazes {
             int inp;
             do {
                 System.out.println("Which maze would you like to enter [1-6] by order of increasing difficulty:");
-                System.out.println("Currently only maze 1 and 2 are populated.");
+                System.out.println("Currently only maze 1, 2 and 3 are populated.");
                 inp = sc.nextInt();
             } while (checkInp(inp));
             inp--;

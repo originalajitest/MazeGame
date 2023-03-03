@@ -31,7 +31,12 @@ public class Maze extends Throwable {
             {"F", "T", "F", "T"},
             {"F", "T", "F", null}};
     private static final String[][] maze3 = new String[][]{
-            {null,null}};
+            {null, "T", "T", "T", "F", "T"},
+            {"T", "F", "F", "T", "F", "T"},
+            {"T", "T", "F", "T", "F", "T"},
+            {"F", "T", "F", "T", "T", "T"},
+            {"T", "T", "T", "F", "F", "F"},
+            {"T", "F", "T", "T", "T", null}};
     private static final String[][] maze4 = new String[][]{
             {null,null}};
     private static final String[][] maze5 = new String[][]{
