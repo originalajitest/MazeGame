@@ -104,6 +104,7 @@ class MazesTest {
         try{
             assertTrue(!mazeRef.possibleMove(1, "Down"));
             mazeRef.applyMove(1, "down");
+            mazeRef.possibleMove(1, "up");
             mazeRef.applyMove(1, "up");
             mazeRef.applyMove(1, "down");
         } catch (InvalidInputException e){
@@ -121,6 +122,7 @@ class MazesTest {
         try{
             mazeRef.possibleMove(1, "Right");
             mazeRef.applyMove(1,"Right");
+            mazeRef.possibleMove(1, "left");
             mazeRef.applyMove(1,"left");
         } catch (InvalidInputException e){
             fail("Should not fail.");
