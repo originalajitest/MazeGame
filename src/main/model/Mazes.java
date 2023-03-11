@@ -10,15 +10,17 @@ import java.util.LinkedList;
 public class Mazes {
 
     ArrayList<Integer> arrangement;
-    private LinkedList<Maze> mazes = new LinkedList<Maze>();
+    private LinkedList<Maze> mazes;
 
-    public Mazes(ArrayList order) {
+    //REQUIRES: order is not empty and it is an integer list
+    public Mazes(ArrayList<Integer> order) {
         this.arrangement = order;
         initializeMazes();
         setDefaultSolved();
     }
 
     private void initializeMazes() {
+        mazes = new LinkedList<Maze>();
         Maze mazeTemp;
         int temp;
         for (int i = 0; i < arrangement.size(); i++) {
@@ -36,6 +38,8 @@ public class Mazes {
         }
     }
 
+
+    //RE
     public boolean checkAllSolved() {
         int solvedCount = 0;
         for (int i = 0; i < mazes.size(); i++) {
@@ -62,12 +66,17 @@ public class Mazes {
         mazes.get(index).applyMove(str);
     }
 
-    public boolean possibleMove(int index, String str) throws IndexOutOfBoundsException, InvalidInputException {
+    public boolean possibleMove(int index, String str) throws InvalidInputException {
         return mazes.get(index).possibleMove(str);
     }
 
     public String printMazeWPlayer(int index) {
         return mazes.get(index).printWPlayer();
+    }
+
+    //Only for testing and debugging
+    public String printMaze(int index) {
+        return mazes.get(index).printNormal();
     }
 
     public boolean solved(int index) {
@@ -76,6 +85,11 @@ public class Mazes {
 
     public void resetSolved(int index) {
         mazes.get(index).resetSolved();
+    }
+
+    //Only for debugging and testing
+    public void quickSolve(int index) {
+        mazes.get(index).quickSolve();
     }
 
 }

@@ -27,4 +27,8 @@ public class Player {
         posY = posY + inp;
     }
 
+    public void setXAndY(int posX, int posY) {
+        this.posX = posX;
+        this.posY = posY;
+    }
 }

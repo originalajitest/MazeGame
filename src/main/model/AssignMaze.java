@@ -38,19 +38,19 @@ public class AssignMaze {
     public String[][] assignMaze(int pos) {
         switch (pos) {
             case 0:
-                return maze1;
+                return maze1.clone();
             case 1:
-                return maze2;
+                return maze2.clone();
             case 2:
-                return maze3;
+                return maze3.clone();
             case 3:
-                return maze4;
+                return maze4.clone();
             case 4:
-                return maze5;
+                return maze5.clone();
             case 5:
-                return maze6;
+                return maze6.clone();
             default:
-                return emptyMaze;
+                return emptyMaze.clone();
         }
     }
 

@@ -143,7 +143,7 @@ public class Main {
         try {
             possible = mazes.possibleMove(index, str);
         } catch (InvalidInputException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             return true;
         }
         return possible;

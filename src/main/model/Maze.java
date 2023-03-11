@@ -7,10 +7,10 @@ public class Maze extends Exception {
     private Player user;
 
     //Store the start point and the end point of the maze;
-    private Integer startY;
-    private Integer startX;
-    private Integer endY;
-    private Integer endX;
+    private int startY = -1;
+    private int startX = -1;
+    private int endY = -1;
+    private int endX = -1;
 
     private boolean solved;
     private boolean solvedOnce;
@@ -21,7 +21,9 @@ public class Maze extends Exception {
     //REQUIRES: Maze is a rectangle or a square.
     public Maze(int pos) {
         maze = assign.assignMaze(pos);
-        assignPoints();
+        if (startX == -1 || startY == -1 || endX == -1 || endY == -1) {
+            assignPoints();
+        }
         solved = false;
         solvedOnce = false;
         readyPrint();
@@ -39,14 +41,13 @@ public class Maze extends Exception {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
                 if (maze[i][j] == null) {
-                    if (startY == null) {
+                    if (startY == -1) {
                         startX = j;
                         startY = i;
                     } else {
                         endX = j;
                         endY = i;
                     }
-                    this.maze[i][j] = "T";
                 }
             }
         }
@@ -113,6 +114,7 @@ public class Maze extends Exception {
         return printMazeWPlayer;
     }
 
+    //Only for testing and debugging
     public String printNormal() {
         return printMaze;
     }
@@ -129,7 +131,7 @@ public class Maze extends Exception {
         }
     }
 
-    public boolean possibleMove(String inp) throws InvalidInputException, IndexOutOfBoundsException {
+    public boolean possibleMove(String inp) throws InvalidInputException {
         if (inp.equalsIgnoreCase("Up")) {
             return landingOkY(user.getX(), (user.getY() - 1));
         } else if (inp.equalsIgnoreCase("Down")) {
@@ -141,7 +143,7 @@ public class Maze extends Exception {
         }
     }
 
-    private boolean landingOkY(int j, int i) throws InvalidInputException, IndexOutOfBoundsException {
+    private boolean landingOkY(int j, int i) throws InvalidInputException {
         if (i < 0 || i >= maze.length) {
             throw new InvalidInputException("Input Out of Bounds.");
         } else if (maze[i][j] == "T") {
@@ -151,7 +153,7 @@ public class Maze extends Exception {
         }
     }
 
-    private boolean landingOkX(int j, int i) throws InvalidInputException, IndexOutOfBoundsException {
+    private boolean landingOkX(int j, int i) throws InvalidInputException {
         if (j < 0 || j >= maze[0].length) {
             throw new InvalidInputException("Input Out of Bounds.");
         } else if (maze[i][j] == "T") {
@@ -173,5 +175,12 @@ public class Maze extends Exception {
 
     public void resetSolved() {
         solved = false;
+        initializePlayer();
+    }
+
+    //Only for debugging and testing
+    public void quickSolve() {
+        user.setXAndY(endY, endX);
+        justSolved();
     }
 }
