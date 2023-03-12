@@ -22,14 +22,13 @@ class MazesTest {
         arrangement.add(5);
         arrangement.add(6);//This one returns the default maze, just in-case necessary, it will never be called again.
 
-        mazeRef = new Mazes(arrangement);
-
     }
 
 
 
     @Test
     void testPrinting() {
+        mazeRef = new Mazes(arrangement);
         mazeRef.initializePlayer(0);
         String maze = mazeRef.printMazeWPlayer(0);
         String mazeCompare = "0 P 0 \n0   0 \n0   E \n";
@@ -47,6 +46,7 @@ class MazesTest {
 
     @Test
     void testBasicSolved() {
+        mazeRef = new Mazes(arrangement);
         assertFalse(mazeRef.checkSolved(0));
         assertFalse(mazeRef.checkSolved(1));
         assertFalse(mazeRef.checkSolved(2));
@@ -59,6 +59,7 @@ class MazesTest {
 
     @Test
     void testSolved() {
+        mazeRef = new Mazes(arrangement);
         assertFalse(mazeRef.checkSolved(0));
         mazeRef.initializePlayer(0);
         assertFalse(!mazeRef.solved(0));
@@ -77,6 +78,7 @@ class MazesTest {
 
     @Test
     void testPossibleAndApplyMove() {
+        mazeRef = new Mazes(arrangement);
         mazeRef.initializePlayer(0);
         try{
             mazeRef.possibleMove(0, "up");
@@ -104,7 +106,7 @@ class MazesTest {
         try{
             assertTrue(!mazeRef.possibleMove(1, "Down"));
             mazeRef.applyMove(1, "down");
-            mazeRef.possibleMove(1, "up");
+            assertTrue(!mazeRef.possibleMove(1, "UP"));
             mazeRef.applyMove(1, "up");
             mazeRef.applyMove(1, "down");
         } catch (InvalidInputException e){
@@ -131,6 +133,8 @@ class MazesTest {
 
     @Test
     void testResetSolved() {
+        mazeRef = new Mazes(arrangement);
+        mazeRef = new Mazes(arrangement);
         mazeRef.initializePlayer(0);
         assertFalse(!mazeRef.solved(0));
         mazeRef.quickSolve(0);

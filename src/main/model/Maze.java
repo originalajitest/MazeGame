@@ -21,7 +21,7 @@ public class Maze extends Exception {
     //REQUIRES: Maze is a rectangle or a square.
     public Maze(int pos) {
         maze = assign.assignMaze(pos);
-        if (startX == -1 || startY == -1 || endX == -1 || endY == -1) {
+        if (startX == -1) {
             assignPoints();
         }
         solved = false;
@@ -48,6 +48,7 @@ public class Maze extends Exception {
                         endX = j;
                         endY = i;
                     }
+                    maze[i][j] = "T";
                 }
             }
         }
