@@ -1,7 +1,10 @@
 package model;
 
+//Deals with initializing mazes, will deal with converting from an image to a 2D array.
 public class AssignMaze {
 
+    //Will all be changed to references later during GUI phase
+    //Empty mazes are initialised as {{null,null}} so the program can find the start and end, they must have that.
     private static final String[][] maze1 = new String[][]{
             {"F", null, "F"},
             {"F", "T", "F"},
@@ -25,7 +28,6 @@ public class AssignMaze {
     private static final String[][] maze6 = new String[][]{
             {null,null}};
 
-    //Empty mazes are initialised as {{null,null}} so the program can find the start and end, they must have that.
     private static final String[][] emptyMaze = new String[][]{
             {null,null}};
 
@@ -33,6 +35,8 @@ public class AssignMaze {
     }
 
 
+    //REQUIRES: pos is an int;
+    //EFFECTS: returns the maze which corresponds to the number, all other mazes are returned to be empty {{null,null}}
     //Currently this is only returning the mazes, but later it will also deal with turning
     // the maze images to code readable images
     public String[][] assignMaze(int pos) {
@@ -54,6 +58,9 @@ public class AssignMaze {
         }
     }
 
+    //REQUIRES: maze is not an empty array
+    //EFFECTS: Performs a deep copy and sends it back to assignMaze,
+    // currently only relevant for testing, might be useful later.
     private String[][] mazeClone(String[][] maze) {
         String[][] ans = new String[maze.length][];
         for (int i = 0; i < maze.length; i++) {

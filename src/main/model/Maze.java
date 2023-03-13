@@ -1,10 +1,12 @@
 package model;
 
-//Contains mazes, initializes them.
 //added throwable for NullPointerException, but found another solution.
+//Object that is changes the most and works the most. It contains the maze it is working on,
+// a reference to player in the maze and helps establish communication.
 public class Maze extends Exception {
 
-    private Player user;
+    //Links to Player class for each maze and stores current position.
+    private Player player;
 
     //Store the start point and the end point of the maze;
     private int startY = -1;
@@ -18,25 +20,24 @@ public class Maze extends Exception {
     private String[][] maze;
     AssignMaze assign = new AssignMaze();
 
-    //REQUIRES: Maze is a rectangle or a square.
+    private String printMaze;
+    private String printMazeWPlayer;
+
+    //REQUIRES: pos is an integer
+    //MODIFIES: this
+    //EFFECTS: gets a maze from AssignMaze.java and stores it in maze. Initializes start and end points.
+    // Sets default solved and solvedOnce to false. gets a printable maze ready.
     public Maze(int pos) {
         maze = assign.assignMaze(pos);
-        if (startX == -1) {
-            assignPoints();
-        }
+        assignPoints();
         solved = false;
         solvedOnce = false;
         readyPrint();
     }
 
-    private String printMaze;
-    private String printMazeWPlayer;
-
-    //REQUIRES: pos is a number between 0 and 5 inclusive, Mazes are predefined.
-
-
-    //REQUIRES: Maze is a 2D array, it has at least two entries (2 rows & 1 column or vice versa) so that we can assign
-    // start and the end.
+    //REQUIRES: Maze is a 2D array, it has at least two entries (1 row & 2 columns)
+    //MODIFIES: this (startX, startY, endX, endY)
+    //EFFECTS: initializes start and end points. Labeled by two null 's. Changes these back to "T"
     private void assignPoints() {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
@@ -54,6 +55,9 @@ public class Maze extends Exception {
         }
     }
 
+    //REQUIRES: maze is initialized to some maze.
+    //MODIFIES: this.printMaze
+    //EFFECTS: Produces a sring which is like the maze, without player.
     //used For Debugging as it can show any maze and also used as ref for later code.
     public void readyPrint() {
         printMaze = "";
@@ -73,28 +77,39 @@ public class Maze extends Exception {
         }
     }
 
+    //REQUIRES: maze is initializes to some maze.
+    //EFFECTS: returns true if maze is 1 row and 2 columns only (its has a start and end only).
     public boolean isNotMaze() {
-        return (((maze.length == 1) && (maze[0].length == 2)) || ((maze[0].length == 1) && (maze.length == 1)));
+        return ((maze.length == 1) && (maze[0].length == 2));
     }
 
+    //MODIFIES: this.solved, this.solvedOnce
+    //EFFECTS: sets them both to true, used setting status of emptyMazes and for debugging.
     public void solved() {
         solved = true;
         solvedOnce = true;
     }
 
+    //REQUIRES: assignPoints() has been run.
+    //MODIFIES: this.player
+    //EFFECTS: initializes player to start point.
     public void initializePlayer() {
-        user = new Player(startX, startY);
+        player = new Player(startX, startY);
     }
 
+    //EFFECTS: returns solved is true.
     public boolean isSolved() {
         return solved;
     }
 
+    //REQUIRES: both maze and player have been initialized.
+    //MODIFIES: this.printMazeWPlayer
+    //EFFECTS: sets it to the current maze with P at where the player is. Will change largely during gui stage.
     private void readyPrintWPlayer() {
         printMazeWPlayer = "";
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
-                if ((j == user.getX()) && (i == user.getY())) {
+                if ((j == player.getX()) && (i == player.getY())) {
                     printMazeWPlayer = printMazeWPlayer + "P ";
                 } else if (j == startX && i == startY) {
                     printMazeWPlayer = printMazeWPlayer + "S ";
@@ -110,40 +125,51 @@ public class Maze extends Exception {
         }
     }
 
+    //REQUIRES: printMazeWPlayer is not null.
+    //EFFECTS: returns this.printMazeWPlayer
     public String printWPlayer() {
         readyPrintWPlayer();
         return printMazeWPlayer;
     }
 
+    //REQUIRES: printMaze is not null.
+    //EFFECTS: returns this.printMaze
     //Only for testing and debugging
     public String printNormal() {
         return printMaze;
     }
 
+    //REQUIRES: inp is a string and one of :up, down, right, left
+    //MODIFIES: this.player
+    //EFFECTS: moves the player one move in specified direction.
     public void applyMove(String inp) {
         if (inp.equalsIgnoreCase("Up")) {
-            user.moveY(-1);
+            player.moveY(-1);
         } else if (inp.equalsIgnoreCase("Down")) {
-            user.moveY(1);
+            player.moveY(1);
         } else if (inp.equalsIgnoreCase("Right")) {
-            user.moveX(1);
+            player.moveX(1);
         } else {
-            user.moveX(-1);
+            player.moveX(-1);
         }
     }
 
+    //REQUIRES: inp is a string and one of :up, down, right, left
+    //EFFECTS: returns true if the player can be moved one in specified direction, throws exception if not possible
     public boolean possibleMove(String inp) throws InvalidInputException {
         if (inp.equalsIgnoreCase("Up")) {
-            return landingOkY(user.getX(), (user.getY() - 1));
+            return landingOkY(player.getX(), (player.getY() - 1));
         } else if (inp.equalsIgnoreCase("Down")) {
-            return landingOkY(user.getX(), (user.getY() + 1));
+            return landingOkY(player.getX(), (player.getY() + 1));
         } else if (inp.equalsIgnoreCase("Right")) {
-            return landingOkX((user.getX() + 1), user.getY());
+            return landingOkX((player.getX() + 1), player.getY());
         } else {
-            return landingOkX((user.getX() - 1), user.getY());
+            return landingOkX((player.getX() - 1), player.getY());
         }
     }
 
+    //REQUIRES: both are integers between -1 and (maze dimension +1)
+    //EFFECTS: returns false if move is possible, else throws exception with error inside it.
     private boolean landingOkY(int j, int i) throws InvalidInputException {
         if (i < 0 || i >= maze.length) {
             throw new InvalidInputException("Input Out of Bounds.");
@@ -154,6 +180,8 @@ public class Maze extends Exception {
         }
     }
 
+    //REQUIRES: both are integers between -1 and (maze dimension +1)
+    //EFFECTS: returns false if move is possible, else throws exception with error inside it.
     private boolean landingOkX(int j, int i) throws InvalidInputException {
         if (j < 0 || j >= maze[0].length) {
             throw new InvalidInputException("Input Out of Bounds.");
@@ -164,8 +192,11 @@ public class Maze extends Exception {
         }
     }
 
+    //REQUIRES: this.player has been initialized
+    //MODIFIES: this.solved, this.solvedOnce
+    //EFFECTS: if player is at end point of maze, sets maze status to solved and returns false
     public boolean justSolved() {
-        if ((user.getX() == endY) && (user.getY() == endX)) {
+        if ((player.getX() == endY) && (player.getY() == endX)) {
             solved = true;
             solvedOnce = true;
             return false;
@@ -174,14 +205,17 @@ public class Maze extends Exception {
         }
     }
 
+    //EFFECTS: changes solved back to false so it can be done again.
+    // Second line is only necessary for the testing phase.
     public void resetSolved() {
         solved = false;
         initializePlayer();
     }
 
+    //EFFECTS: sets player to end points and sets solved to true via justSolved().
     //Only for debugging and testing
     public void quickSolve() {
-        user.setXAndY(endY, endX);
+        player.setXAndY(endY, endX);
         justSolved();
     }
 }

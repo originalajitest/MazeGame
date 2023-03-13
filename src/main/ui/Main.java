@@ -8,19 +8,12 @@ import java.util.Random;
 import java.util.Scanner;
 
 /*
-    Move println's from Model to UI. Cna use String and + and store locally then call.
-    Anything which stores a lot of data should be in model.
-    All scanner inputs should be in main.
-
-    Add tests
     Add documentation.
     Add user stories (5).
 
     REQUIRES:   What has to be done before the function is called (pre req)
     MODIFIES:   If objects are being changed (this for current object), or inputs.
     EFFECTS:    Purpose of the function be specific.
-
-
 */
 
 //Initialises array of mazes/medals, array which decides which maze is in which position
@@ -33,6 +26,7 @@ public class Main {
 
     static ArrayList<Integer> arrangement;
 
+    //EFFECTS: runs the program, when this terminates the program also terminates.
     public static void main(String[] args) {
         System.out.println();
         arrangement = new ArrayList<Integer>();
@@ -52,6 +46,7 @@ public class Main {
         System.out.println("Congratulations, all mazes have been completed.");
     }
 
+    //EFFECTS: asks the user for an input on which maze to enter and returns the index of the maze in mazes.
     private static int mazeNum() {
         int index;
         int num;
@@ -72,6 +67,8 @@ public class Main {
         return index;
     }
 
+    //REQUIRES: 0<= index < arrangement.size
+    //EFFECTS: allows the user to complete the maze via up, down, right, left, once maze completed then leaves the maze.
     private static void play(int index) {
         String move;
         System.out.println(mazes.printMazeWPlayer(index));
@@ -87,6 +84,9 @@ public class Main {
         } while (solved(index));
     }
 
+    //REQUIRES: 0<= index < arrangement.size
+    //MODIFIES: this.mazes.mazes[index].solved
+    //EFFECTS: asks if the user wants to do the maze again later.
     private static void again(int index) {
         System.out.println("To be able to do this maze again enter (Again):");
         String again = sc.next();
@@ -96,6 +96,7 @@ public class Main {
         }
     }
 
+    //EFFECT: returns false if input is an integer otherwise true.
     private static boolean isInt(String inp) {
         try {
             Integer.parseInt(inp);
@@ -106,6 +107,7 @@ public class Main {
         }
     }
 
+    //EFFECTS: returns true if inp is withing 1 and 6 (number of mazes).
     //Will change to accommodate how many mazes actually have a maze in them.
     private static boolean checkInp(int inp) {
         if ((inp > 0) && (inp < 7)) {
@@ -116,6 +118,7 @@ public class Main {
         }
     }
 
+    //EFFECTS: returns true if the maze in index i has been solved
     private static boolean checkSolved(int i) {
         if (mazes.checkSolved(i)) {
             System.out.println("This maze has already been solved");
@@ -125,19 +128,28 @@ public class Main {
         }
     }
 
+    //EFFECTS: returns false if all mazes have been solved.
     private static boolean checkAllSolved() {
         return mazes.checkAllSolved();
     }
 
+    //EFFECTS: returns false if inp is one of possible strings (up,down,right,left) ignoring case
     private static boolean validInp(String inp) {
         return !(inp.equalsIgnoreCase("Up") || inp.equalsIgnoreCase("Down")
                 || inp.equalsIgnoreCase("Right") || inp.equalsIgnoreCase("Left"));//!!!
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    // str is one of up,down,right,left
+    //MODIFIES: mazes.mazes[].player
+    //EFFECTS: moves the player 1 move in given direction.
     private static void applyMove(int index, String str) {
         mazes.applyMove(index, str);
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    // str is one of up,down,right,left
+    //EFFECTS: returns false if player can be moved in given spot else true with error.
     private static boolean possibleMove(int index, String str) {
         boolean possible;
         try {
@@ -149,6 +161,9 @@ public class Main {
         return possible;
     }
 
+    //REQUIRES: 0 <= index <= arrangement.size()
+    //MODIFIES: mazes.mazes[index].solved
+    //EFFECTS: returns false if maze has just been solved and player is at endpoint else true
     private static boolean solved(int index) {
         return mazes.solved(index);
     }

@@ -1,24 +1,28 @@
 package model;
 
-import model.Maze;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-//Contains the mazes, initializes mazes using super class, checks and returns values
-//Performs actions on the mazes.
+//Contains the mazes, initializes mazes using Maze.java
+//Main function is to call function in Maze.java, it acts as a method of communication between main and the various
+// mazes stored in mazes
 public class Mazes {
 
     ArrayList<Integer> arrangement;
     private LinkedList<Maze> mazes;
 
     //REQUIRES: order is not empty and it is an integer list
+    //MODIFIES: this
+    //EFFECTS: copys order into arrangement and calls initializeMazes() then sets empty mazes to solved.
     public Mazes(ArrayList<Integer> order) {
         this.arrangement = order;
         initializeMazes();
         setDefaultSolved();
     }
 
+    //REQUIRES: arrangement is not empty
+    //MODIFIES: this.mazes
+    //EFFECTS: places Maze objects into mazes array each maze no. corresponding to number in arrangement.
     private void initializeMazes() {
         mazes = new LinkedList<Maze>();
         Maze mazeTemp;
@@ -30,6 +34,9 @@ public class Mazes {
         }
     }
 
+    //REQUIRES: mazes have been initialized.
+    //MODIFIES: this.mazes[].solved
+    //EFFECTS: goes through the mazes and sets empty mazes to solved.
     private void setDefaultSolved() {
         for (int i = 0; i < mazes.size(); i++) {
             if (mazes.get(i).isNotMaze()) {
@@ -38,8 +45,8 @@ public class Mazes {
         }
     }
 
-
-    //RE
+    //REQUIRES: mazes has been initialized
+    //EFFECTS: returns false if all mazes are solved otherwise true
     public boolean checkAllSolved() {
         int solvedCount = 0;
         for (int i = 0; i < mazes.size(); i++) {
@@ -54,39 +61,64 @@ public class Mazes {
         }
     }
 
+    //REQUIRES: i is and int, and 0 <= i <= arrangement.size()
+    //MODIFIES: this.mazes
+    //EFFECTS: initialize player in given maze number.
     public void initializePlayer(int i) {
         mazes.get(i).initializePlayer();
     }
 
+    //REQUIRES: mazes have been initialized; i is and int, and 0 <= i <= arrangement.size()
+    //EFFECTS: returns solved
     public boolean checkSolved(int i) {
         return mazes.get(i).isSolved();
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    // str is one of up,down,right,left
+    //MODIFIES: mazes[].player
+    //EFFECTS: moves the player 1 move in given direction.
     public void applyMove(int index, String str) {
         mazes.get(index).applyMove(str);
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    // str is one of up,down,right,left
+    //EFFECTS: returns false if player can be moved in given spot else throws InvalidInputException
     public boolean possibleMove(int index, String str) throws InvalidInputException {
         return mazes.get(index).possibleMove(str);
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    //EFFECTS: returns a string which is the current array with the player
     public String printMazeWPlayer(int index) {
         return mazes.get(index).printWPlayer();
     }
 
+    //REQUIRES: maze in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    //EFFECTS: returns a string which is the current array
     //Only for testing and debugging
     public String printMaze(int index) {
         return mazes.get(index).printNormal();
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    //MODIFIES: this.mazes[index].solved
+    //EFFECTS: returns false if maze has just been solved and player is at endpoint. else true
     public boolean solved(int index) {
         return mazes.get(index).justSolved();
     }
 
+    //REQUIRES: maze in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    //MODIFIES: this.mazes[index].solved
+    //EFFECTS: changes solved to false
     public void resetSolved(int index) {
         mazes.get(index).resetSolved();
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    //MODIFIES: this.mazes[index].player
+    //EFFECTS: moves player to the end of the maze and runs justSolved()
     //Only for debugging and testing
     public void quickSolve(int index) {
         mazes.get(index).quickSolve();
