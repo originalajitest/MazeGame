@@ -1,9 +1,13 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 //added throwable for NullPointerException, but found another solution.
 //Object that is changes the most and works the most. It contains the maze it is working on,
 // a reference to player in the maze and helps establish communication.
-public class Maze extends Exception {
+public class Maze extends Exception implements Writable {
 
     //Links to Player class for each maze and stores current position.
     private Player player;
@@ -22,6 +26,31 @@ public class Maze extends Exception {
 
     private String printMaze;
     private String printMazeWPlayer;
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        if (player == null) {
+            initializePlayer();
+        }
+        json.put("player", player.toJson());
+        json.put("startY", startY);
+        json.put("startX", startX);
+        json.put("endY", endY);
+        json.put("endX", endX);
+        json.put("solved", solved);
+        json.put("solvedOnce", solvedOnce);
+        json.put("maze", mazeToJson());
+        return json;
+    }
+
+    private JSONArray mazeToJson() {
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < maze.length; i++) {
+            jsonArray.put(maze[i]);
+        }
+        return jsonArray;
+    }
 
     //REQUIRES: pos is an integer
     //MODIFIES: this

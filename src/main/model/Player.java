@@ -1,10 +1,22 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 //Deals with any kind of player movement, deals with player sprites, deals with player location
-public class Player {
+public class Player implements Writable {
 
     private int posX;
     private int posY;
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("posX", posX);
+        json.put("posY", posY);
+        json.put("posY", posY);
+        return json;
+    }
 
     //REQUIRES: posX>=0 and posY>=0
     //MODIFIES: this

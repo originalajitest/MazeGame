@@ -28,9 +28,10 @@ public class Mazes implements Writable {
     public Mazes(List<Object> storedData) {
         this.mazes = (LinkedList<Maze>) storedData.get(0);
         this.arrangement = (ArrayList<Integer>) storedData.get(1);
+        //run readyPrint(); !!!
     }
 
-    public ArrayList<Integer> getArrangement(){
+    public ArrayList<Integer> getArrangement() {
         return arrangement;
     }
 
@@ -53,7 +54,7 @@ public class Mazes implements Writable {
     private JSONArray mazesToJsonMazes() {
         JSONArray jsonArray = new JSONArray();
         for (Maze maze : mazes) {
-            jsonArray.put(maze);
+            jsonArray.put(maze.toJson());
         }
         return jsonArray;
     }
