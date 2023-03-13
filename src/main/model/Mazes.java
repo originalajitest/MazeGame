@@ -1,12 +1,17 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 //Contains the mazes, initializes mazes using Maze.java
 //Main function is to call function in Maze.java, it acts as a method of communication between main and the various
 // mazes stored in mazes
-public class Mazes {
+public class Mazes implements Writable {
 
     ArrayList<Integer> arrangement;
     private LinkedList<Maze> mazes;
@@ -18,6 +23,39 @@ public class Mazes {
         this.arrangement = order;
         initializeMazes();
         setDefaultSolved();
+    }
+
+    public Mazes(List<Object> storedData) {
+        this.mazes = (LinkedList<Maze>) storedData.get(0);
+        this.arrangement = (ArrayList<Integer>) storedData.get(1);
+    }
+
+    public ArrayList<Integer> getArrangement(){
+        return arrangement;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("arrangement", arrangementToJsonArrangement());
+        json.put("mazes", mazesToJsonMazes());
+        return json;
+    }
+
+    private JSONArray arrangementToJsonArrangement() {
+        JSONArray jsonArray = new JSONArray();
+        for (int i : arrangement) {
+            jsonArray.put(i);
+        }
+        return jsonArray;
+    }
+
+    private JSONArray mazesToJsonMazes() {
+        JSONArray jsonArray = new JSONArray();
+        for (Maze maze : mazes) {
+            jsonArray.put(maze);
+        }
+        return jsonArray;
     }
 
     //REQUIRES: arrangement is not empty

@@ -1,0 +1,18 @@
+{
+    "arrangement": [
+        5,
+        2,
+        0,
+        1,
+        4,
+        3
+    ],
+    "mazes": [
+        "model.Maze",
+        "model.Maze",
+        "model.Maze",
+        "model.Maze",
+        "model.Maze",
+        "model.Maze"
+    ]
+}

@@ -1,9 +1,18 @@
 package ui;
 
+//import jdk.internal.util.jar.JarIndex;
+
 import model.InvalidInputException;
 import model.Mazes;
+import org.json.JSONObject;
+import persistence.JsonReader;
+import persistence.JsonWriter;
+import persistence.Writable;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -24,12 +33,83 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
     static Mazes mazes;
 
-    static ArrayList<Integer> arrangement;
+    static ArrayList<Integer> arrangement = new ArrayList<Integer>();
 
+    static boolean keepGoing = true;
+
+    private static final String JSON_STORE = "./data/saveState.json";
+    private static JsonWriter jsonWriter;
+    private static JsonReader jsonReader;
+
+    //REQUIRES: first input is one of l, n, q
     //EFFECTS: runs the program, when this terminates the program also terminates.
+    @SuppressWarnings("methodlength")
     public static void main(String[] args) {
-        System.out.println();
-        arrangement = new ArrayList<Integer>();
+        String inp;
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
+
+        System.out.println("\nSelect from:");
+        System.out.println("\tl -> load game state from file");
+        System.out.println("\tn -> new game");
+        System.out.println("\tq -> quit");
+        inp = sc.next();
+        if (inp.equalsIgnoreCase("n")) {
+            defaultInitialize();
+        } else if (inp.equalsIgnoreCase("l")) {
+            loadState();
+        } else {
+            keepGoing = false;
+        }
+
+        while (keepGoing) {
+            do {
+                int index = mazeNum();
+                play(index);
+                if (!keepGoing) {
+                    break;
+                }
+                again(index);
+                isSaving();
+                isLeaving();
+                if (!keepGoing) {
+                    break;
+                }
+            } while (checkAllSolved());
+        }
+        if (checkAllSolved() && (arrangement != null)) {
+            System.out.println("Congratulations, all mazes have been completed.");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads saveState from file
+    private static void loadState() {
+        try {
+            List<Object> storedData = jsonReader.read();
+            mazes = new Mazes(storedData);
+            arrangement = mazes.getArrangement();
+            System.out.println("Loaded from " + JSON_STORE);
+        } catch (IOException e) {
+            keepGoing = false;
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
+    }
+
+    // EFFECTS: saves the workroom to file
+    private static void saveState() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(mazes);
+            jsonWriter.close();
+            System.out.println("Saved to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    //EFFECTS: runs like before, moved because of persistence.
+    private static void defaultInitialize() {
         int temp;
         for (int i = 0; i < 6; i++) {
             do {
@@ -38,12 +118,23 @@ public class Main {
             arrangement.add(temp);
         }
         mazes = new Mazes(arrangement);
-        do {
-            int index = mazeNum();
-            play(index);
-            again(index);
-        } while (checkAllSolved());
-        System.out.println("Congratulations, all mazes have been completed.");
+
+    }
+
+    private static void isSaving() {
+        System.out.println("Enter s to save game state to file");
+        String inp = sc.next();
+        if (inp.equalsIgnoreCase("s")) {
+            saveState();
+        }
+    }
+
+    private static void isLeaving() {
+        System.out.println("Enter q to quit");
+        String inp = sc.next();
+        if (inp.equalsIgnoreCase("q")) {
+            keepGoing = false;
+        }
     }
 
     //EFFECTS: asks the user for an input on which maze to enter and returns the index of the maze in mazes.
@@ -81,6 +172,11 @@ public class Main {
             } while (possibleMove(index, move));
             applyMove(index, move);
             System.out.println(mazes.printMazeWPlayer(index));
+            isSaving();
+            isLeaving();
+            if (!keepGoing) {
+                break;
+            }
         } while (solved(index));
     }
 
