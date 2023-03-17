@@ -4,9 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 //Contains the mazes, initializes mazes using Maze.java
 //Main function is to call function in Maze.java, it acts as a method of communication between main and the various
@@ -25,10 +23,9 @@ public class Mazes implements Writable {
         setDefaultSolved();
     }
 
-    public Mazes(List<Object> storedData) {
-        this.mazes = (LinkedList<Maze>) storedData.get(0);
-        this.arrangement = (ArrayList<Integer>) storedData.get(1);
-        //run readyPrint(); !!!
+    public Mazes(Map<String, Object> storedData) {
+        this.mazes = (LinkedList<Maze>) storedData.get("mazes");
+        this.arrangement = (ArrayList<Integer>) storedData.get("arrangement");
     }
 
     public ArrayList<Integer> getArrangement() {

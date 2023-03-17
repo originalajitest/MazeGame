@@ -1,20 +1,13 @@
 package ui;
 
-//import jdk.internal.util.jar.JarIndex;
-
 import model.InvalidInputException;
 import model.Mazes;
-import org.json.JSONObject;
 import persistence.JsonReader;
 import persistence.JsonWriter;
-import persistence.Writable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /*
     Add documentation.
@@ -23,6 +16,11 @@ import java.util.Scanner;
     REQUIRES:   What has to be done before the function is called (pre req)
     MODIFIES:   If objects are being changed (this for current object), or inputs.
     EFFECTS:    Purpose of the function be specific.
+
+    toJSON tests in models folder
+    Persistence folder:
+    reader test create test files and try reading.
+    writer test write to a json file.
 */
 
 //Initialises array of mazes/medals, array which decides which maze is in which position
@@ -77,7 +75,7 @@ public class Main {
                 }
             } while (checkAllSolved());
         }
-        if (checkAllSolved() && (arrangement != null)) {
+        if (!checkAllSolved() && (arrangement != null)) {
             System.out.println("Congratulations, all mazes have been completed.");
         }
     }
@@ -86,7 +84,7 @@ public class Main {
     // EFFECTS: loads saveState from file
     private static void loadState() {
         try {
-            List<Object> storedData = jsonReader.read();
+            Map<String, Object> storedData = jsonReader.read();
             mazes = new Mazes(storedData);
             arrangement = mazes.getArrangement();
             System.out.println("Loaded from " + JSON_STORE);
@@ -118,7 +116,13 @@ public class Main {
             arrangement.add(temp);
         }
         mazes = new Mazes(arrangement);
+        initializePlayers();
+    }
 
+    private static void initializePlayers() {
+        for (int i = 0; i < arrangement.size(); i++) {
+            mazes.initializePlayer(i);
+        }
     }
 
     private static void isSaving() {
@@ -154,7 +158,6 @@ public class Main {
             num--;
             index = arrangement.indexOf(num);
         } while (checkSolved(index));
-        mazes.initializePlayer(index);
         return index;
     }
 

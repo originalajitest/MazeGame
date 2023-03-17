@@ -4,6 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 //added throwable for NullPointerException, but found another solution.
 //Object that is changes the most and works the most. It contains the maze it is working on,
 // a reference to player in the maze and helps establish communication.
@@ -64,6 +69,28 @@ public class Maze extends Exception implements Writable {
         readyPrint();
     }
 
+    public Maze(Map<String, Object> json) {
+        this.endY = (int) json.get("endY");
+        this.endX = (int) json.get("endX");
+        this.startX = (int) json.get("startX");
+        this.startY = (int) json.get("startY");
+        this.solved = (boolean) json.get("solved");
+        this.solvedOnce = (boolean) json.get("solvedOnce");
+        toMazeArray((ArrayList) json.get("maze"));
+        this.player = new Player(json.get("player"));
+        readyPrint();
+    }
+
+    private void toMazeArray(ArrayList json) {
+        maze = new String[json.size()][((ArrayList) json.get(0)).size()];
+        for (int i = 0; i < json.size(); i++) {
+            for (int j = 0; j < ((ArrayList) json.get(0)).size(); j++) {
+                Object temp = ((ArrayList) json.get(i)).get(j);
+                maze[i][j] = (String) temp;
+            }
+        }
+    }
+    
     //REQUIRES: Maze is a 2D array, it has at least two entries (1 row & 2 columns)
     //MODIFIES: this (startX, startY, endX, endY)
     //EFFECTS: initializes start and end points. Labeled by two null 's. Changes these back to "T"
@@ -96,7 +123,7 @@ public class Maze extends Exception implements Writable {
                     printMaze = printMaze + "S ";
                 } else if (j == endX && i == endY) {
                     printMaze = printMaze + "E ";
-                } else if (maze[i][j] == "T") {
+                } else if (maze[i][j].equals("T")) {
                     printMaze = printMaze + "  ";
                 } else {
                     printMaze = printMaze + "0 ";
@@ -144,7 +171,7 @@ public class Maze extends Exception implements Writable {
                     printMazeWPlayer = printMazeWPlayer + "S ";
                 } else if (j == endX && i == endY) {
                     printMazeWPlayer = printMazeWPlayer + "E ";
-                } else if (maze[i][j] == "T") {
+                } else if (maze[i][j].equals("T")) {
                     printMazeWPlayer = printMazeWPlayer + "  ";
                 } else {
                     printMazeWPlayer = printMazeWPlayer + "0 ";
@@ -202,7 +229,7 @@ public class Maze extends Exception implements Writable {
     private boolean landingOkY(int j, int i) throws InvalidInputException {
         if (i < 0 || i >= maze.length) {
             throw new InvalidInputException("Input Out of Bounds.");
-        } else if (maze[i][j] == "T") {
+        } else if (maze[i][j].equals("T")) {
             return false;
         } else {
             throw new InvalidInputException("Invalid Input");
@@ -214,7 +241,7 @@ public class Maze extends Exception implements Writable {
     private boolean landingOkX(int j, int i) throws InvalidInputException {
         if (j < 0 || j >= maze[0].length) {
             throw new InvalidInputException("Input Out of Bounds.");
-        } else if (maze[i][j] == "T") {
+        } else if (maze[i][j].equals("T")) {
             return false;
         } else {
             throw new InvalidInputException("Invalid Input");

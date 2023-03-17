@@ -2,8 +2,12 @@ package model;
 
 import model.*;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import java.util.ArrayList;
+import java.util.Map;
 
 //Testes for each class, gaps identified.
 class MazesTest {
@@ -151,5 +155,37 @@ class MazesTest {
         assertTrue(!mazeRef.solved(0));
         mazeRef.resetSolved(0);
         assertFalse(!mazeRef.solved(0));
+    }
+
+    @Test
+    void testArrangeCopy() {
+        ArrayList<Integer> temp = mazeRef.getArrangement();
+        assertTrue(temp == arrangement);
+    }
+
+    @Test
+    void testToJson() {
+        JSONObject temp = mazeRef.toJson();
+        ArrayList<Integer> tempArrange = toNormal((JSONArray) temp.get("arrangement"));
+        assertTrue(confirm(tempArrange));
+    }
+
+    private ArrayList<Integer> toNormal(JSONArray inp) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        for (int j = 0; j < inp.length(); j++) {
+            Object temp = inp.get(j);
+            ans.add((Integer) temp);
+        }
+        return ans;
+    }
+
+    private boolean confirm(ArrayList<Integer> inp) {
+        boolean ans = true;
+        for (int i = 0; i < inp.size(); i++) {
+            if (arrangement.get(i) != inp.get(i)) {
+                return false;
+            }
+        }
+        return ans;
     }
 }

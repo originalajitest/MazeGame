@@ -1,7 +1,10 @@
 package model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
+
+import java.util.HashMap;
 
 //Deals with any kind of player movement, deals with player sprites, deals with player location
 public class Player implements Writable {
@@ -14,7 +17,6 @@ public class Player implements Writable {
         JSONObject json = new JSONObject();
         json.put("posX", posX);
         json.put("posY", posY);
-        json.put("posY", posY);
         return json;
     }
 
@@ -24,6 +26,11 @@ public class Player implements Writable {
     public Player(int posX, int posY) {
         this.posX = posX;
         this.posY = posY;
+    }
+
+    public Player(Object json) {
+        this.posX = (int) ((HashMap) json).get("posX");
+        this.posY = (int) ((HashMap) json).get("posY");
     }
 
     //EFFECTS: returns current posX

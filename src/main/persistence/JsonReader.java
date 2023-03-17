@@ -22,10 +22,10 @@ public class JsonReader {
 
     // EFFECTS: reads workroom from file and returns it;
     // throws IOException if an error occurs reading data from file
-    public List<Object> read() throws IOException {
+    public Map<String, Object> read() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
-        return parseWorkRoom(jsonObject);
+        return parseMazes(jsonObject);
     }
 
     // EFFECTS: reads source file as string and returns it
@@ -40,22 +40,25 @@ public class JsonReader {
     }
 
     // EFFECTS: parses workroom from JSON object and returns it
-    private List<Object> parseWorkRoom(JSONObject jsonObject) {
+    private Map<String, Object> parseMazes(JSONObject jsonObject) {
+        Map<String, Object> ans = new HashMap<>();
         JSONArray arrangeObj = jsonObject.getJSONArray("arrangement");
         ArrayList<Integer> arrangement = new ArrayList<>();
-        for (int i = 0; i < arrangeObj.length(); i++) {
-            arrangement.add((int) arrangeObj.get(i));
+        for (Object i: arrangeObj) {
+            arrangement.add((Integer) i);
         }
-        JSONArray mazesObj = jsonObject.getJSONArray("mazes");
-        LinkedList<Object> mazes = new LinkedList<>();
-        for (Object i: mazesObj) {
-            mazes.add(i);
-        }
-        List<Object> ans = new ArrayList<>();
-        ans.add(mazes);
-        ans.add(arrangement);
+        ans.put("arrangement", arrangement);
 
+        JSONArray mazesObj = jsonObject.getJSONArray("mazes");
+        LinkedList<Maze> mazes = new LinkedList<>();
+        for (Object i: mazesObj) {
+            mazes.add(toMaze((JSONObject) i));
+        }
+        ans.put("mazes", mazes);
         return ans;
     }
 
+    private Maze toMaze(JSONObject json) {
+        return new Maze(json.toMap());
+    }
 }
