@@ -61,7 +61,7 @@ public class Main {
         }
 
         while (keepGoing) {
-            do {
+            if (checkAllSolved()) {
                 int index = mazeNum();
                 play(index);
                 if (!keepGoing) {
@@ -70,10 +70,13 @@ public class Main {
                 again(index);
                 isSaving();
                 isLeaving();
-                if (!keepGoing) {
-                    break;
-                }
-            } while (checkAllSolved());
+//                if (!keepGoing) {
+//                    break;
+//                }
+            }
+            if (!checkAllSolved()) {
+                keepGoing = false;
+            }
         }
         if (!checkAllSolved() && (arrangement != null)) {
             System.out.println("Congratulations, all mazes have been completed.");

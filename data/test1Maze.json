@@ -1,0 +1,32 @@
+{
+    "arrangement": [0],
+    "mazes": [{
+        "endY": 2,
+        "endX": 2,
+        "solved": false,
+        "startY": 0,
+        "startX": 1,
+        "maze": [
+            [
+                "F",
+                "T",
+                "F"
+            ],
+            [
+                "F",
+                "T",
+                "F"
+            ],
+            [
+                "F",
+                "T",
+                "T"
+            ]
+        ],
+        "solvedOnce": false,
+        "player": {
+            "posX": 1,
+            "posY": 0
+        }
+    }]
+}
