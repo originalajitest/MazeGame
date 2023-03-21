@@ -12,6 +12,7 @@ public class Player implements Writable {
     private int posX;
     private int posY;
 
+    //EFFECTS: converts Player to a JSON object
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
@@ -28,6 +29,9 @@ public class Player implements Writable {
         this.posY = posY;
     }
 
+    //REQUIRES: json is an object
+    //MODIFIES: this
+    //EFFECTS: gets x and y from json and sets posX and posY to gotten values.
     public Player(Object json) {
         this.posX = (int) ((HashMap) json).get("posX");
         this.posY = (int) ((HashMap) json).get("posY");

@@ -56,8 +56,9 @@ Story 2
 The user will get into the program.<br>
 They will pick a maze one of 1 or 2.<br>
 They will go through the maze using provided inputs.<br>
-Once they are done the program will end.
-<br>
+Once they are done the program will end.<br>
+
+
 *I will  add more based on program completion and completion of stretch goals.*
 
 

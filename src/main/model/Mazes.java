@@ -14,7 +14,7 @@ public class Mazes implements Writable {
     ArrayList<Integer> arrangement;
     private LinkedList<Maze> mazes;
 
-    //REQUIRES: order is not empty and it is an integer list
+    //REQUIRES: order is not empty and is an integer list
     //MODIFIES: this
     //EFFECTS: copys order into arrangement and calls initializeMazes() then sets empty mazes to solved.
     public Mazes(ArrayList<Integer> order) {
@@ -23,15 +23,19 @@ public class Mazes implements Writable {
         setDefaultSolved();
     }
 
+    //MODIFIES: this
+    //EFFECTS: initializes this according to information in storedData.
     public Mazes(Map<String, Object> storedData) {
         this.mazes = (LinkedList<Maze>) storedData.get("mazes");
         this.arrangement = (ArrayList<Integer>) storedData.get("arrangement");
     }
 
+    //EFFECTS: returns the arrangement array. Used after loading the mazes.
     public ArrayList<Integer> getArrangement() {
         return arrangement;
     }
 
+    //EFFECTS: converts this to a JSON object.
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
@@ -40,6 +44,7 @@ public class Mazes implements Writable {
         return json;
     }
 
+    //EFFECTS: converts arrangement to a JSON array.
     private JSONArray arrangementToJsonArrangement() {
         JSONArray jsonArray = new JSONArray();
         for (int i : arrangement) {
@@ -48,6 +53,7 @@ public class Mazes implements Writable {
         return jsonArray;
     }
 
+    //EFFECTS: converts each Maze in mazes to a JSON object and adds it to a JSON array.
     private JSONArray mazesToJsonMazes() {
         JSONArray jsonArray = new JSONArray();
         for (Maze maze : mazes) {

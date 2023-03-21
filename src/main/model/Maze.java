@@ -32,6 +32,7 @@ public class Maze extends Exception implements Writable {
     private String printMaze;
     private String printMazeWPlayer;
 
+    //EFFECTS: converts this to a JSON object and returns that object.
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
@@ -49,6 +50,7 @@ public class Maze extends Exception implements Writable {
         return json;
     }
 
+    //EFFECTS: converts the String[][]maze to a JSON object.
     private JSONArray mazeToJson() {
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < maze.length; i++) {
@@ -69,6 +71,8 @@ public class Maze extends Exception implements Writable {
         readyPrint();
     }
 
+    //MODIFIES: this
+    //EFFECTS: converts JSON object to a Maze
     public Maze(Map<String, Object> json) {
         this.endY = (int) json.get("endY");
         this.endX = (int) json.get("endX");
@@ -81,6 +85,8 @@ public class Maze extends Exception implements Writable {
         readyPrint();
     }
 
+    //MODIFIES: this.maze
+    //EFFECTS: converts maze JSON object to maze String[][]
     private void toMazeArray(ArrayList json) {
         maze = new String[json.size()][((ArrayList) json.get(0)).size()];
         for (int i = 0; i < json.size(); i++) {

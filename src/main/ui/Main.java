@@ -16,11 +16,6 @@ import java.util.*;
     REQUIRES:   What has to be done before the function is called (pre req)
     MODIFIES:   If objects are being changed (this for current object), or inputs.
     EFFECTS:    Purpose of the function be specific.
-
-    toJSON tests in models folder
-    Persistence folder:
-    reader test create test files and try reading.
-    writer test write to a json file.
 */
 
 //Initialises array of mazes/medals, array which decides which maze is in which position
@@ -41,12 +36,35 @@ public class Main {
 
     //REQUIRES: first input is one of l, n, q
     //EFFECTS: runs the program, when this terminates the program also terminates.
-    @SuppressWarnings("methodlength")
+//    @SuppressWarnings("methodlength") //usefull whenever
     public static void main(String[] args) {
-        String inp;
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
+        loadOrNew();
+        while (keepGoing) {
+            if (checkAllSolved()) {
+                int index = mazeNum();
+                play(index);
+                if (!keepGoing) {
+                    break;
+                }
+                again(index);
+                isSaving();
+                isLeaving();
+            }
+            if (!checkAllSolved()) {
+                keepGoing = false;
+            }
+        }
+        if (!checkAllSolved() && (arrangement != null)) {
+            System.out.println("Congratulations, all mazes have been completed.");
+        }
+    }
 
+    //MODIFIES: this
+    //EFFECTS: asks user if they want to start a new game, load a game or quit and performs respective functions.
+    private static void loadOrNew() {
+        String inp;
         System.out.println("\nSelect from:");
         System.out.println("\tl -> load game state from file");
         System.out.println("\tn -> new game");
@@ -59,32 +77,10 @@ public class Main {
         } else {
             keepGoing = false;
         }
-
-        while (keepGoing) {
-            if (checkAllSolved()) {
-                int index = mazeNum();
-                play(index);
-                if (!keepGoing) {
-                    break;
-                }
-                again(index);
-                isSaving();
-                isLeaving();
-//                if (!keepGoing) {
-//                    break;
-//                }
-            }
-            if (!checkAllSolved()) {
-                keepGoing = false;
-            }
-        }
-        if (!checkAllSolved() && (arrangement != null)) {
-            System.out.println("Congratulations, all mazes have been completed.");
-        }
     }
 
     // MODIFIES: this
-    // EFFECTS: loads saveState from file
+    // EFFECTS: loads saveState from file to mazes.
     private static void loadState() {
         try {
             Map<String, Object> storedData = jsonReader.read();
@@ -97,7 +93,7 @@ public class Main {
         }
     }
 
-    // EFFECTS: saves the workroom to file
+    // EFFECTS: saves the current state of mazes to file
     private static void saveState() {
         try {
             jsonWriter.open();
@@ -109,7 +105,8 @@ public class Main {
         }
     }
 
-    //EFFECTS: runs like before, moved because of persistence.
+    //MODIFIES: this
+    //EFFECTS: initialization for a new game, puts random numbers in arrangement, initializes mazes using arrangement.
     private static void defaultInitialize() {
         int temp;
         for (int i = 0; i < 6; i++) {
@@ -122,12 +119,15 @@ public class Main {
         initializePlayers();
     }
 
+    //MODIFIES: this.mazes.mazes().player
+    //EFFECTS: goes into each Maze in mazes.mazes and initializes player in each.
     private static void initializePlayers() {
         for (int i = 0; i < arrangement.size(); i++) {
             mazes.initializePlayer(i);
         }
     }
 
+    //EFFECTS: asks user if they want to save the game, if so runs saveState();
     private static void isSaving() {
         System.out.println("Enter s to save game state to file");
         String inp = sc.next();
@@ -136,6 +136,7 @@ public class Main {
         }
     }
 
+    //EFFECTS: asks user if they want to quit the game, if so then sets keepGoing to false.
     private static void isLeaving() {
         System.out.println("Enter q to quit");
         String inp = sc.next();
