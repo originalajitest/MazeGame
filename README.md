@@ -41,23 +41,89 @@ treasure. These will be assigned to specific numbers so that they are random and
 
 ## User Stories:
 
-Story 1
+<h3>Phase 0:</h3>
+<h4>Story 1</h4>
+<ul>
+<li> As a user I want to be able to start a game</li>
+<li> I should be able to pick a specific level to play out of the 6</li>
+<li> I should be able to add a medal to my collection</li>
+<li> I should be able to teleport out of a maze with the medal</li>
+<li> I should be able to quit and come back to the state I left the game in</li>
+<li> I should be able to add all medals by commands, and then hence get to end credits</li>
+</ul>
 
-As a user I want to be able to start a game. <br>
-I should be able to pick a specific level to play out of the 6.<br>
-I should be able to add a medal to my collection.<br>
-I should be able to teleport out of a maze with the medal.<br>
-I should be able to quit and come back to the state I left the game in.<br>
-I should be able to add all medals by commands, and then hence get to end credits.<br>
+
+<!-- The number in list-style is the emoji unicode -->
+
+<h3>Phase 1:</h3>
+<h4>Story 2</h4>
+<ul style = "list-style:'\1F3CE'">
+<li> The user will get into the program</li>
+<li> They will pick a maze one of 1 or 2</li>
+<li> They will go through the maze using provided inputs</li>
+<li> Once they are done the program will end</li>
+</ul>
+
+<h4>Story 3</h4>
+<ul style = "list-style:'\1F3CE'">
+<li> The user will run the program</li>
+<li> The user will pick maze 1</li>
+<li> They will try to move up and will get an 'Input Out of Bound' error</li>
+<li> They will try to move left and get an 'Invalid Input' error</li>
+<li> They can now finish the maze if they want</li>
+</ul>
+
+<h4>Story 4</h4>
+<ul style = "list-style:'\1F3CE'">
+<li> The user will run the program</li>
+<li> The user will then enter each maze and run through them</li>
+<li> Answering not to all requests to do the maze again later</li>
+<li> Once mazes 1-3 are all finished and solved, the program will output 
+'Congratulations, all mazes have been completed.' </li>
+<li> The program will then end</li>
+</ul>
+
+<h4>Story 5</h4>
+<ul style = "list-style:'\1F3CE'">
+<li> The user will run the program</li>
+<li> They can enter the maze and do some of it if they want</li>
+<li> They will stop the program by quiting it</li>
+</ul>
 
 
-Story 2
+<h3>Phase 2:</h3>
+<h4>Story 6</h4>
+<ul style = "list-style:'\1F3CD'">
+<li> The user will start the program</li>
+<li> They will opt to quit at the point</li>
+<li> They will exit the program at that point.</li>
+</ul>
 
-The user will get into the program.<br>
-They will pick a maze one of 1 or 2.<br>
-They will go through the maze using provided inputs.<br>
-Once they are done the program will end.<br>
+<h4>Story 7</h4>
+<ul style = "list-style:'\1F3CD'">
+<li> The user will start the program</li>
+<li> They will opt to start a new game</li>
+<li> They will enter the first maze by entering 1</li>
+<li> They will move the user down by one move</li>
+<li> Then refuse to quit or save</li>
+<li> They move down again</li>
+<li> Save the game state by pressing s</li>
+<li> Quit the game by pressing q</li>
+</ul> 
 
+<h4>Story 8</h4>
+<ul style = "list-style:'\1F3CD'">
+<li> The user will start the program</li>
+<li> They will opt to load a game</li>
+<li> The previous game from user story 7 will be loaded</li>
+<li> The user will enter maze 1 again</li>
+<li> They player should be where it was left, 2 places below S</li>
+<li> They user will finish the maze by going right once</li>
+<li> Refuse to save</li>
+<li> Refuse to quit</li>
+<li> Type 'no' so they do not have to enter the maze again</li>
+<li> Then save and quit</li>
+</ul>
 
 *I will  add more based on program completion and completion of stretch goals.*
 

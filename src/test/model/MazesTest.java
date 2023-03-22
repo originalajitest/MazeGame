@@ -188,4 +188,5 @@ class MazesTest {
         }
         return ans;
     }
+
 }

@@ -40,6 +40,7 @@ class JsonWriterTest {
     void test1Maze() {
         try {
             Mazes mazes = new Mazes(arrange);
+            mazes.initializePlayer(0);
             JsonWriter writer = new JsonWriter("./data/test1Maze.json");
             writer.open();
             writer.write(mazes);
