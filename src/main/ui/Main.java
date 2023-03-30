@@ -5,6 +5,7 @@ import model.Mazes;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
@@ -20,6 +21,18 @@ import java.util.*;
 
 //Initialises array of mazes/medals, array which decides which maze is in which position
 //As a reference to extra stretch goals also shows which place has the extra games. 1,3,5?
+
+/*
+    Ok...
+    So...
+    An initial screen with options to new, load, and quit.
+    Then go to a simple screen to pick which maze to enter
+    Then go to maze, maze is entirely static and user moves above
+    When user reach end, pop-up for finishing
+    Then go back to picking screen.
+    Complete till all mazes done then quit
+    Maze has a settings logo above to save and quit currently.
+ */
 public class Main {
 
     static Random rand = new Random();
@@ -36,8 +49,23 @@ public class Main {
 
     //REQUIRES: first input is one of l, n, q
     //EFFECTS: runs the program, when this terminates the program also terminates.
-//    @SuppressWarnings("methodlength") //usefull whenever
+//    @SuppressWarnings("methodlength") //use full whenever
     public static void main(String[] args) {
+//        System.out.println("Pick one of the following");
+//        System.out.println("\t g - Use Gui");
+//        System.out.println("\t c - Use Cli");
+//        String inp = sc.next();
+//
+//        if (inp.equalsIgnoreCase("g")) {
+//            StartFrame begin = new StartFrame(JSON_STORE);
+//        } else if (inp.equalsIgnoreCase("c")) {
+//            runCLI();
+//        }
+        runCLI();
+    }
+
+    //EFFECTS: runs the CLI version, moved cause thought had to get GUI but told to make new main.
+    private static void runCLI() {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         loadOrNew();

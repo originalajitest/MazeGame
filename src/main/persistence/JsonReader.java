@@ -52,6 +52,7 @@ public class JsonReader {
             mazes.add(toMaze((JSONObject) i));
         }
         ans.put("mazes", mazes);
+        ans.put("color", jsonObject.get("color"));
         return ans;
     }
 

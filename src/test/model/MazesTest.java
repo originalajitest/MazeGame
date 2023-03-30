@@ -170,6 +170,13 @@ class MazesTest {
         assertTrue(confirm(tempArrange));
     }
 
+    @Test
+    void testColor() {
+        assertEquals(mazeRef.getColor(), "black");
+        mazeRef.setColor("blue");
+        assertEquals(mazeRef.getColor(), "blue");
+    }
+
     private ArrayList<Integer> toNormal(JSONArray inp) {
         ArrayList<Integer> ans = new ArrayList<>();
         for (int j = 0; j < inp.length(); j++) {

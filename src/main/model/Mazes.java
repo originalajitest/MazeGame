@@ -13,6 +13,7 @@ public class Mazes implements Writable {
 
     ArrayList<Integer> arrangement;
     private LinkedList<Maze> mazes;
+    private String color;
 
     //REQUIRES: order is not empty and is an integer list
     //MODIFIES: this
@@ -21,6 +22,7 @@ public class Mazes implements Writable {
         this.arrangement = order;
         initializeMazes();
         setDefaultSolved();
+        color = "black";
     }
 
     //MODIFIES: this
@@ -28,6 +30,17 @@ public class Mazes implements Writable {
     public Mazes(Map<String, Object> storedData) {
         this.mazes = (LinkedList<Maze>) storedData.get("mazes");
         this.arrangement = (ArrayList<Integer>) storedData.get("arrangement");
+        this.color = storedData.get("color").toString();
+    }
+
+    //Getter
+    public String getColor() {
+        return color;
+    }
+
+    //Setter
+    public void setColor(String inp) {
+        color = inp;
     }
 
     //EFFECTS: returns the arrangement array. Used after loading the mazes.
@@ -41,6 +54,7 @@ public class Mazes implements Writable {
         JSONObject json = new JSONObject();
         json.put("arrangement", arrangementToJsonArrangement());
         json.put("mazes", mazesToJsonMazes());
+        json.put("color", color);
         return json;
     }
 
