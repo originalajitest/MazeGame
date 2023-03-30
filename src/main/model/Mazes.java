@@ -43,6 +43,16 @@ public class Mazes implements Writable {
         color = inp;
     }
 
+    //Getter
+    public String[][] getMaze(int i) {
+        return mazes.get(i).getMaze();
+    }
+
+    //Getter
+    public Map<String, Object> getReq(int i) {
+        return mazes.get(i).getReq();
+    }
+
     //EFFECTS: returns the arrangement array. Used after loading the mazes.
     public ArrayList<Integer> getArrangement() {
         return arrangement;

@@ -32,6 +32,22 @@ public class Maze extends Exception implements Writable {
     private String printMaze;
     private String printMazeWPlayer;
 
+    //Getter
+    public String[][] getMaze() {
+        return maze;
+    }
+
+    //Getter
+    public Map<String, Object> getReq() {
+        Map<String, Object> out = new HashMap<>();
+        out.put("player", player);
+        out.put("startX", startX);
+        out.put("startY", startY);
+        out.put("endX", endX);
+        out.put("endY", endY);
+        return out;
+    }
+
     //EFFECTS: converts this to a JSON object and returns that object.
     @Override
     public JSONObject toJson() {
