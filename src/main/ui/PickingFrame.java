@@ -36,18 +36,21 @@ public class PickingFrame extends JPanel implements ActionListener {
 
     JFrame frame;
     private JComboBox inputsCombo;
+    private JComboBox colorCombo;
     private Graphics gra;
 
     private static final int VGAP = 15;
     private String[] inputs = {"Maze 1", "Maze 2", "Maze 3"};
     protected int scale = 30;
 
+    private String[] colors = {"black", "blue", "cyan", "gray", "pink", "yellow", "magenta"};
+
     public PickingFrame(Mazes mazes, ArrayList<Integer> arrange) {
         this.mazes = mazes;
         this.arrange = arrange;
 //        SwingUtilities.invokeLater(new Runnable() {
 //            public void run() {
-                createAndShowGUI();
+        createAndShowGUI();
 //            }
 //        });
     }
@@ -155,15 +158,28 @@ public class PickingFrame extends JPanel implements ActionListener {
 
         index = arrange.indexOf(inp);
         String[][] maze = mazes.getMaze(index);
-        JPanel panel = new JPanel();
-        JButton b1;
-        JButton b2;
         Container container = frame.getContentPane();
         initializeRequired(index);
 
         container.removeAll();
         container.repaint();
 
+        colorCombo = new JComboBox(colors);
+        colorCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String temp = (String) colorCombo.getSelectedItem();
+                try {
+                    Field field = Class.forName("java.awt.Color").getField(temp);
+                    color = (Color)field.get(null);
+                    mazes.setColor(temp);
+                } catch (Exception ex) {
+                    color = null;
+                }
+            }
+        });
+
+        frame.add(colorCombo);
         frame.add(new Gra(maze));
 
         KeyHandler keyListen = new KeyHandler();
@@ -239,7 +255,6 @@ public class PickingFrame extends JPanel implements ActionListener {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            System.out.println("Point C");
             for (int i = 0; i < maze.length; i++) {
                 for (int j = 0; j < maze[0].length; j++) {
                     if (j == player.getX() && i == player.getY()) {
@@ -256,7 +271,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                     g.fillRect(j * scale, i * scale, scale, scale);
                 }
             }
-            System.out.println("Point D");
+            System.out.println("Point A");
         }
     }
 
