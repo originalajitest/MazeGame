@@ -14,6 +14,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,7 +38,6 @@ public class PickingFrame extends JPanel implements ActionListener {
     JFrame frame;
     private JComboBox inputsCombo;
     private JComboBox colorCombo;
-    private Graphics gra;
 
     private static final int VGAP = 15;
     private String[] inputs = {"Maze 1", "Maze 2", "Maze 3"};
@@ -48,11 +48,8 @@ public class PickingFrame extends JPanel implements ActionListener {
     public PickingFrame(Mazes mazes, ArrayList<Integer> arrange) {
         this.mazes = mazes;
         this.arrange = arrange;
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
+        jsonWriter = new JsonWriter(data);
         createAndShowGUI();
-//            }
-//        });
     }
 
     private void createAndShowGUI() {
@@ -130,10 +127,24 @@ public class PickingFrame extends JPanel implements ActionListener {
                     goToMazes(2);
                 }
             }
-        } else {
+        } else if (e.getActionCommand() == "quit") {
             System.exit(0);
+        } else if (e.getActionCommand() == "save") {
+            saveState();
         }
         frame.setVisible(true);
+    }
+
+    // EFFECTS: saves the current state of mazes to file
+    private static void saveState() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(mazes);
+            jsonWriter.close();
+            System.out.println("Saved to " + data);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + data);
+        }
     }
 
     private static Image getScaledImage(Image src, int w, int h) {
@@ -179,7 +190,24 @@ public class PickingFrame extends JPanel implements ActionListener {
             }
         });
 
+        JButton b1 = new JButton("Save Game");
+        Font font = b1.getFont().deriveFont(Font.PLAIN);
+        b1.setFont(font);
+        b1.setActionCommand("save");
+        b1.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
+        quit = new ImageIcon(getScaledImage(quit.getImage(), 20, 20));
+        JButton b2 = new JButton("Quit", quit);
+        b2.setActionCommand("quit");
+        b2.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        b1.addActionListener(this);
+        b2.addActionListener(this);
+
         frame.add(colorCombo);
+        frame.add(b1);
+        frame.add(b2);
         frame.add(new Gra(maze));
 
         KeyHandler keyListen = new KeyHandler();

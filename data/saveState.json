@@ -1,13 +1,13 @@
 {
     "arrangement": [
-        4,
         5,
-        1,
-        2,
         0,
-        3
+        4,
+        2,
+        3,
+        1
     ],
-    "color": "black",
+    "color": "yellow",
     "mazes": [
         {
             "endY": 0,
@@ -26,6 +26,35 @@
             }
         },
         {
+            "endY": 2,
+            "endX": 2,
+            "solved": false,
+            "startY": 0,
+            "startX": 1,
+            "maze": [
+                [
+                    "F",
+                    "T",
+                    "F"
+                ],
+                [
+                    "F",
+                    "T",
+                    "F"
+                ],
+                [
+                    "F",
+                    "T",
+                    "T"
+                ]
+            ],
+            "solvedOnce": false,
+            "player": {
+                "posX": 1,
+                "posY": 0
+            }
+        },
+        {
             "endY": 0,
             "endX": 1,
             "solved": true,
@@ -36,44 +65,6 @@
                 "T"
             ]],
             "solvedOnce": true,
-            "player": {
-                "posX": 0,
-                "posY": 0
-            }
-        },
-        {
-            "endY": 3,
-            "endX": 3,
-            "solved": false,
-            "startY": 0,
-            "startX": 0,
-            "maze": [
-                [
-                    "T",
-                    "F",
-                    "F",
-                    "F"
-                ],
-                [
-                    "T",
-                    "T",
-                    "T",
-                    "T"
-                ],
-                [
-                    "F",
-                    "T",
-                    "F",
-                    "T"
-                ],
-                [
-                    "F",
-                    "T",
-                    "F",
-                    "T"
-                ]
-            ],
-            "solvedOnce": false,
             "player": {
                 "posX": 0,
                 "posY": 0
@@ -142,35 +133,6 @@
             }
         },
         {
-            "endY": 2,
-            "endX": 2,
-            "solved": false,
-            "startY": 0,
-            "startX": 1,
-            "maze": [
-                [
-                    "F",
-                    "T",
-                    "F"
-                ],
-                [
-                    "F",
-                    "T",
-                    "F"
-                ],
-                [
-                    "F",
-                    "T",
-                    "T"
-                ]
-            ],
-            "solvedOnce": false,
-            "player": {
-                "posX": 1,
-                "posY": 0
-            }
-        },
-        {
             "endY": 0,
             "endX": 1,
             "solved": true,
@@ -181,6 +143,44 @@
                 "T"
             ]],
             "solvedOnce": true,
+            "player": {
+                "posX": 0,
+                "posY": 0
+            }
+        },
+        {
+            "endY": 3,
+            "endX": 3,
+            "solved": false,
+            "startY": 0,
+            "startX": 0,
+            "maze": [
+                [
+                    "T",
+                    "F",
+                    "F",
+                    "F"
+                ],
+                [
+                    "T",
+                    "T",
+                    "T",
+                    "T"
+                ],
+                [
+                    "F",
+                    "T",
+                    "F",
+                    "T"
+                ],
+                [
+                    "F",
+                    "T",
+                    "F",
+                    "T"
+                ]
+            ],
+            "solvedOnce": false,
             "player": {
                 "posX": 0,
                 "posY": 0
