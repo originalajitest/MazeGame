@@ -1,15 +1,20 @@
 package ui;
 
+import model.InvalidInputException;
 import model.Mazes;
 import model.Player;
 import persistence.JsonWriter;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -20,12 +25,14 @@ public class PickingFrame extends JPanel implements ActionListener {
 
     static Mazes mazes;
     static ArrayList<Integer> arrange = new ArrayList<Integer>();
-    static String color;
+    static Color color;
     static Player player;
     static int startX;
     static int startY;
     static int endX;
     static int endY;
+
+    private int index;
 
     JFrame frame;
     private JComboBox inputsCombo;
@@ -33,18 +40,16 @@ public class PickingFrame extends JPanel implements ActionListener {
 
     private static final int VGAP = 15;
     private String[] inputs = {"Maze 1", "Maze 2", "Maze 3"};
-    private int scale = 30;
+    protected int scale = 30;
 
     public PickingFrame(Mazes mazes, ArrayList<Integer> arrange) {
         this.mazes = mazes;
         this.arrange = arrange;
-        createAndShowGUI();
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        gra = g;
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+                createAndShowGUI();
+//            }
+//        });
     }
 
     private void createAndShowGUI() {
@@ -57,6 +62,7 @@ public class PickingFrame extends JPanel implements ActionListener {
 
         //Display the window.
         frame.pack();
+        frame.setSize(400, 400);
         frame.setVisible(true);
     }
 
@@ -109,15 +115,22 @@ public class PickingFrame extends JPanel implements ActionListener {
         String selection = inputsCombo.getSelectedItem().toString();
         if (e.getActionCommand() == "continue") {
             if (selection == "Maze 1") {
-                goToMazes(0);
+                if (!mazes.checkSolved(arrange.indexOf(0))) {
+                    goToMazes(0);
+                }
             } else if (selection == "Maze 2") {
-                goToMazes(1);
+                if (!mazes.checkSolved(arrange.indexOf(1))) {
+                    goToMazes(1);
+                }
             } else if (selection == "Maze 3") {
-                goToMazes(2);
+                if (!mazes.checkSolved(arrange.indexOf(2))) {
+                    goToMazes(2);
+                }
             }
         } else {
             System.exit(0);
         }
+        frame.setVisible(true);
     }
 
     private static Image getScaledImage(Image src, int w, int h) {
@@ -133,8 +146,14 @@ public class PickingFrame extends JPanel implements ActionListener {
 
     @SuppressWarnings("methodlength")
     public void goToMazes(int inp) {
-        color = mazes.getColor();
-        int index = arrange.get(inp);
+        try {
+            Field field = Class.forName("java.awt.Color").getField(mazes.getColor());
+            color = (Color)field.get(null);
+        } catch (Exception e) {
+            color = null;
+        }
+
+        index = arrange.indexOf(inp);
         String[][] maze = mazes.getMaze(index);
         JPanel panel = new JPanel();
         JButton b1;
@@ -145,26 +164,15 @@ public class PickingFrame extends JPanel implements ActionListener {
         container.removeAll();
         container.repaint();
 
-        for (int i = 0; i < maze.length; i++) {
-            for (int j = 0; j < maze[0].length; j++) {
-                if (j == player.getX() && i == player.getY()) {
-                    gra.setColor(Color.red);
-                    gra.fillRect(j * scale, i * scale, scale, scale);
-                } else if (j == startX && i == startY) {
-                    gra.setColor(Color.orange);
-                    gra.fillRect(j * scale, i * scale, scale, scale);
-                } else if (j == endX && i == endY) {
-                    gra.setColor(Color.green);
-                    gra.fillRect(j * scale, i * scale, scale, scale);
-                } else if (maze[i][j] == "F") {
-                    gra.setColor(Color.decode(color));
-                    gra.fillRect(j * scale, i * scale, scale, scale);
-//                }
-//                gra.setColor(Color.decode(color));
-//                gra.fillRect();
-                }
-            }
-        }
+        frame.add(new Gra(maze));
+
+        KeyHandler keyListen = new KeyHandler();
+
+        frame.addKeyListener(keyListen);
+
+        frame.setFocusable(true);
+        frame.setFocusTraversalKeysEnabled(false);
+        frame.requestFocus();
 
     }
 
@@ -177,8 +185,97 @@ public class PickingFrame extends JPanel implements ActionListener {
         endY = (int) temp.get("endY");
     }
 
+    @SuppressWarnings("methodlength")
+    private void move(int code) {
+        if (code == KeyEvent.VK_RIGHT) {
+            try {
+                mazes.possibleMove(index, "right");
+                mazes.applyMove(index,"right");
+            } catch (InvalidInputException e) {
+                e.getMessage();
+            }
+        } else if (code == KeyEvent.VK_LEFT) {
+            try {
+                mazes.possibleMove(index, "left");
+                mazes.applyMove(index,"left");
+            } catch (InvalidInputException e) {
+                e.getMessage();
+            }
+        } else if (code == KeyEvent.VK_UP) {
+            try {
+                mazes.possibleMove(index, "up");
+                mazes.applyMove(index,"up");
+            } catch (InvalidInputException e) {
+                e.getMessage();
+            }
+        } else if (code == KeyEvent.VK_DOWN) {
+            try {
+                mazes.possibleMove(index, "down");
+                mazes.applyMove(index,"down");
+            } catch (InvalidInputException e) {
+                e.getMessage();
+            }
+        }
+        frame.repaint();
+        boolean temp = mazes.solved(index);
+        if (!temp) {
+            new PickingFrame(mazes, arrange);
+        }
+//        else {
+//            frame.getContentPane().removeAll();
+//            JLabel label = new JLabel("Congratulations! All mazes complete :D");
+//            label.setFont(new Font("Serif", Font.PLAIN, 15));
+//        }
+    }
 
+    private class Gra extends JComponent {
+        private static final long serialVersionUID = 1L;
+        String[][] maze;
 
+        Gra(String[][] inp) {
+            maze = inp;
+        }
 
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            System.out.println("Point C");
+            for (int i = 0; i < maze.length; i++) {
+                for (int j = 0; j < maze[0].length; j++) {
+                    if (j == player.getX() && i == player.getY()) {
+                        g.setColor(Color.red);
+                    } else if (j == startX && i == startY) {
+                        g.setColor(Color.orange);
+                    } else if (j == endX && i == endY) {
+                        g.setColor(Color.green);
+                    } else if (maze[i][j] == "F") {
+                        g.setColor(color);
+                    } else {
+                        g.setColor(Color.white);
+                    }
+                    g.fillRect(j * scale, i * scale, scale, scale);
+                }
+            }
+            System.out.println("Point D");
+        }
+    }
+
+    private class KeyHandler implements KeyListener {
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+//            System.out.println(e.getKeyCode() + "Key Typed");
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            move(e.getKeyCode());
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+//            System.out.println(e.getKeyCode() + "Key Released");
+        }
+    }
 
 }
