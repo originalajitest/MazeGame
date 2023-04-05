@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import javax.swing.*;
 
+//This is where the user picks where to go into a new game or an old saved game state.
 public class StartFrame extends JPanel implements ActionListener {
     protected static JButton b1;
     protected static JButton b2;
@@ -27,10 +28,12 @@ public class StartFrame extends JPanel implements ActionListener {
 
     JFrame frame;
 
+    //Calls the class
     public static void main(String[] args) {
         new StartFrame();
     }
 
+    //Calls the run method
     public StartFrame() {
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
@@ -41,6 +44,7 @@ public class StartFrame extends JPanel implements ActionListener {
         });
     }
 
+    //Arranges the layout of the frame with respective buttons to pick new quit or load.
     @SuppressWarnings("methodlength")
     private void idkInsertName(Container pane) {
 
@@ -61,8 +65,6 @@ public class StartFrame extends JPanel implements ActionListener {
         b1 = new JButton("Load Game", load);
         Font font = b1.getFont().deriveFont(Font.PLAIN);
         b1.setFont(font);
-//        b1.setMnemonic(KeyEvent.VK_D);
-//        b1.setActionCommand("disable");
         b1.setActionCommand("load");
         b1.setAlignmentX(Component.CENTER_ALIGNMENT);
         JsonReader reader = new JsonReader(data);
@@ -76,14 +78,11 @@ public class StartFrame extends JPanel implements ActionListener {
 
         b2 = new JButton("New Game", newGame);
         b2.setFont(font);
-//        b2.setForeground(new Color(0xffffdd));
-//        b2.setMnemonic(KeyEvent.VK_M);
         b2.setActionCommand("newGame");
         b2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         b3 = new JButton("Quit", quit);
         b3.setFont(font);
-//        b3.setMnemonic(KeyEvent.VK_E);
         b3.setActionCommand("quit");
         b3.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -96,8 +95,7 @@ public class StartFrame extends JPanel implements ActionListener {
         b2.setToolTipText("Start a new game");
         b3.setToolTipText("Quit the program");
 
-        //Add Components to this container, using the default FlowLayout.
-
+        //Add Components to this container, using the default BoxLayout.
         panel.add(b1);
         panel.add(b2);
         panel.add(b3);
@@ -107,9 +105,10 @@ public class StartFrame extends JPanel implements ActionListener {
         panel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
 
         pane.add(panel);
-
     }
 
+    //Requires: input is an image or ImageIcon, width and height
+    //EFFECTS: returns a scaled down images to given width and height
     private static Image getScaledImage(Image src, int w, int h) {
         BufferedImage result = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = result.createGraphics();
@@ -121,6 +120,8 @@ public class StartFrame extends JPanel implements ActionListener {
         return result;
     }
 
+    //EFFECTS: deals with button clicks, quit if quit, else load new or old state then pass information forward to
+    // PickingFrame.
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == "load") {
             loadState();
@@ -129,10 +130,8 @@ public class StartFrame extends JPanel implements ActionListener {
         } else if (e.getActionCommand() == "quit") {
             System.exit(0);
         }
-
+        frame.setEnabled(false);
         new PickingFrame(mazes, arrangement);
-//        frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-
     }
 
     /**
@@ -140,6 +139,7 @@ public class StartFrame extends JPanel implements ActionListener {
      * this method should be invoked from the
      * event dispatch thread.
      */
+    //EFFECTS: calls method to arrange the JFrame
     private void createAndShowGUI() {
         //Create and set up the window.
         frame = new JFrame("ButtonHtmlDemo");
@@ -168,6 +168,8 @@ public class StartFrame extends JPanel implements ActionListener {
         }
     }
 
+    //MODIFIES: this
+    //EFFECTS: starts a mazes instance and stores it in a list, a new game
     private static void defaultInitialize() {
         int temp;
         for (int i = 0; i < 6; i++) {

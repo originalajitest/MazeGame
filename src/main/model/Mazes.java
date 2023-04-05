@@ -190,4 +190,12 @@ public class Mazes implements Writable {
         mazes.get(index).quickSolve();
     }
 
+    //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
+    //MODIFIES: this.mazes[index].player
+    //EFFECTS: moves player to the end of the maze
+    //Only for debugging and testing and cheatcode
+    public void quickSolve2(int index) {
+        mazes.get(index).quickSolve2();
+    }
+
 }

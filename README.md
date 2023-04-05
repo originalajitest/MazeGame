@@ -1,5 +1,14 @@
 # My Personal Project -- A Game
 
+## Current project
+
+<br>
+References:
+<ul>
+<li> website for maze6 (https://keesiemeijer.github.io/maze-generator/#generate) with inputs: (thickness-10; Columns-25; Rows-20; Entries-none)</li>
+<li></li>
+</ul>
+
 ## Answering questions
 
 What will this application do:

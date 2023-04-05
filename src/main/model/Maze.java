@@ -274,7 +274,7 @@ public class Maze extends Exception implements Writable {
     //MODIFIES: this.solved, this.solvedOnce
     //EFFECTS: if player is at end point of maze, sets maze status to solved and returns false
     public boolean justSolved() {
-        if ((player.getX() == endY) && (player.getY() == endX)) {
+        if ((player.getX() == endX) && (player.getY() == endY)) {
             solved = true;
             solvedOnce = true;
             return false;
@@ -295,5 +295,11 @@ public class Maze extends Exception implements Writable {
     public void quickSolve() {
         player.setXAndY(endY, endX);
         justSolved();
+    }
+
+    //EFFECTS: sets player to end points
+    //Only for debugging and testing and cheatcode
+    public void quickSolve2() {
+        player.setXAndY(endX, endY);
     }
 }

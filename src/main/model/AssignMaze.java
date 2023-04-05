@@ -1,5 +1,11 @@
 package model;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 //Deals with initializing mazes, will deal with converting from an image to a 2D array.
 public class AssignMaze {
 
@@ -21,15 +27,18 @@ public class AssignMaze {
             {"F", "T", "F", "T", "T", "T"},
             {"T", "T", "T", "F", "F", "F"},
             {"T", "F", "T", "T", "T", null}};
-    private static final String[][] maze4 = new String[][]{
-            {null,null}};
-    private static final String[][] maze5 = new String[][]{
-            {null,null}};
-    private static final String[][] maze6 = new String[][]{
-            {null,null}};
+    private String maze4ref = "/images/maze4.png";
+    private String maze5ref = "/images/maze5.png";
+    private String maze6ref = "/images/maze6.png";
+
+
 
     private static final String[][] emptyMaze = new String[][]{
             {null,null}};
+
+    private Color black = Color.BLACK;
+    private Color cyan = Color.cyan;
+    private Color white = Color.white;
 
     public AssignMaze(){
     }
@@ -48,11 +57,11 @@ public class AssignMaze {
             case 2:
                 return mazeClone(maze3);
             case 3:
-                return mazeClone(maze4);
+                return convToMaze(maze4ref, 41, 41);
             case 4:
-                return mazeClone(maze5);
+                return convToMaze(maze5ref, 41, 25);
             case 5:
-                return mazeClone(maze6);
+                return convToMaze(maze6ref, 51, 41);
             default:
                 return mazeClone(emptyMaze);
         }
@@ -67,6 +76,44 @@ public class AssignMaze {
             ans[i] = maze[i].clone();
         }
         return ans;
+    }
+
+    private String[][] convToMaze(String ref, int w, int h) {
+        try {
+            BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + ref));
+            BufferedImage scaledImg = (BufferedImage) getScaledImage(inp,w,h);
+//            ImageIO.write(scaledImg, "png", new File(System.getProperty("user.dir")
+//                    + "/images/maze21.png"));
+            String[][] maze = new String[h][w];
+            Color c;
+            for (int i = 0; i < scaledImg.getHeight(); i++) {
+                for (int j = 0; j < scaledImg.getWidth(); j++) {
+                    c = new Color(scaledImg.getRGB(j,i));
+                    if (c.equals(cyan)) {
+                        maze[i][j] = null;
+                    } else if (c.equals(black)) {
+                        maze[i][j] = "F";
+                    } else if (c.equals(white)) {
+                        maze[i][j] = "T";
+                    }
+                }
+            }
+            return maze;
+        } catch (IOException e) {
+            e.getMessage();
+        }
+        return emptyMaze;
+    }
+
+    private static Image getScaledImage(Image src, int w, int h) {
+        BufferedImage result = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = result.createGraphics();
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(src, 0, 0, w, h, null);
+        g2.dispose();
+
+        return result;
     }
 
 }
