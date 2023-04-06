@@ -42,6 +42,25 @@ public class AssignMazeTest {
     }
 
     @Test
+    void testScaling() {
+        String maze6ref = "/images/maze6.png";
+        String maze6TestRef = "/images/maze6Test.png";
+        try {
+            BufferedImage maze6inp = ImageIO.read(new File(System.getProperty("user.dir") + maze6ref));
+            BufferedImage maze6Test = ImageIO.read(new File(System.getProperty("user.dir") + maze6TestRef));
+            BufferedImage maze6 = (BufferedImage) assign.getScaledImage(maze6inp, 51, 41);
+            for (int i = 0; i < maze6Test.getHeight(); i++) {
+                for (int j = 0; j < maze6Test.getWidth(); j++) {
+                    assertEquals(maze6Test.getRGB(j,i),maze6.getRGB(j,i));
+                }
+            }
+        } catch (IOException e) {
+            fail();
+        }
+
+    }
+
+    @Test
     void test2() {
         String load = "/images/load.png";
         String[][] empty = assign.assignMaze(9);

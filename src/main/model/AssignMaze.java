@@ -85,7 +85,7 @@ public class AssignMaze {
             BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + ref));
             BufferedImage scaledImg = (BufferedImage) getScaledImage(inp,w,h);
 //            ImageIO.write(scaledImg, "png", new File(System.getProperty("user.dir")
-//                    + "/images/maze21.png"));
+//                    + "/images/maze6Test.png"));
             String[][] maze = new String[h][w];
             Color c;
             for (int i = 0; i < scaledImg.getHeight(); i++) {
