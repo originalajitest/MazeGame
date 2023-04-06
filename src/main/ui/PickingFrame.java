@@ -455,6 +455,7 @@ public class PickingFrame extends JPanel implements ActionListener {
     private void cheat(int code) {
         if (code == KeyEvent.VK_M && ap) {
             mazes.quickSolve2(index);
+            frame.repaint();
         } else if (code == KeyEvent.VK_A && yp) {
             ap = true;
             yp = false;

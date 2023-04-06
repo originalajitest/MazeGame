@@ -78,7 +78,7 @@ public class AssignMaze {
         return ans;
     }
 
-    private String[][] convToMaze(String ref, int w, int h) {
+    public String[][] convToMaze(String ref, int w, int h) {
         try {
             BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + ref));
             BufferedImage scaledImg = (BufferedImage) getScaledImage(inp,w,h);
