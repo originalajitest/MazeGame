@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +45,13 @@ public class AssignMazeTest {
     void test2() {
         String load = "/images/load.png";
         String[][] empty = assign.assignMaze(9);
-        String[][] maze = assign.convToMaze(load,21,21);
+        String[][] maze = assign.convToMaze(load,20,20);
+        try {
+            BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + load));
+            Image img = assign.getScaledImage(inp, 20, 20);
+        } catch (IOException e) {
+            fail();
+        }
         System.out.println(maze);
         System.out.println(empty);
     }
