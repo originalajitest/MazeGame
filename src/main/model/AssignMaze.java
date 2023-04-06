@@ -105,7 +105,7 @@ public class AssignMaze {
         return emptyMaze;
     }
 
-    private static Image getScaledImage(Image src, int w, int h) {
+    public static Image getScaledImage(Image src, int w, int h) {
         BufferedImage result = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = result.createGraphics();
 
