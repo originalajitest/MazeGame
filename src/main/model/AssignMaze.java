@@ -80,7 +80,7 @@ public class AssignMaze {
 
     //REQUIRES: ref is a link to a maze image, w is number of columns and h is the height
     //EFFECTS: returns @D string array based on input maze via ref
-    public String[][] convToMaze(String ref, int w, int h) {
+    private String[][] convToMaze(String ref, int w, int h) {
         try {
             BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + ref));
             BufferedImage scaledImg = (BufferedImage) getScaledImage(inp,w,h);
@@ -109,7 +109,7 @@ public class AssignMaze {
 
     //Requires: input is an image or ImageIcon, width and height
     //EFFECTS: returns a scaled down images to given width and height
-    public Image getScaledImage(Image src, int w, int h) {
+    private Image getScaledImage(Image src, int w, int h) {
         BufferedImage result = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = result.createGraphics();
 
