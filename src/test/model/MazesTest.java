@@ -185,6 +185,31 @@ class MazesTest {
         mazeRef.quickSolve2(0);
     }
 
+    @Test
+    void testAllSolved() {
+        assertFalse(!mazeRef.checkAllSolved());
+        mazeRef.initializePlayer(0);
+        mazeRef.quickSolve(0);
+        mazeRef.initializePlayer(1);
+        mazeRef.quickSolve(1);
+        mazeRef.initializePlayer(2);
+        mazeRef.quickSolve(2);
+        mazeRef.initializePlayer(3);
+        mazeRef.quickSolve(3);
+        mazeRef.initializePlayer(4);
+        mazeRef.quickSolve(4);
+        mazeRef.initializePlayer(5);
+        mazeRef.quickSolve(5);
+        assertTrue(mazeRef.checkSolved(0));
+        assertTrue(mazeRef.checkSolved(1));
+        assertTrue(mazeRef.checkSolved(2));
+        assertTrue(mazeRef.checkSolved(3));
+        assertTrue(mazeRef.checkSolved(4));
+        assertTrue(mazeRef.checkSolved(5));
+        assertTrue(mazeRef.checkSolved(6));
+        assertTrue(!mazeRef.checkAllSolved());
+    }
+
     private ArrayList<Integer> toNormal(JSONArray inp) {
         ArrayList<Integer> ans = new ArrayList<>();
         for (int j = 0; j < inp.length(); j++) {

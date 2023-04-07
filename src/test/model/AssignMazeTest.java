@@ -19,6 +19,10 @@ public class AssignMazeTest {
         assign = new AssignMaze();
     }
 
-
+    @Test
+    void testConvMazeFail() {
+        String txt = "file.txt";
+        assign.convToMaze(txt,6,6);
+    }
 
 }

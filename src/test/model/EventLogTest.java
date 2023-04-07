@@ -54,4 +54,13 @@ public class EventLogTest {
         assertEquals("Event log cleared.", itr.next().getDescription());
         assertFalse(itr.hasNext());
     }
+
+    @Test
+    public void testLeftFromCopy() {
+        e1.hashCode();
+        assertFalse(e1.equals(null));
+        assertFalse(e1.equals(e2));
+        Object obj = new Object();
+        assertFalse(e1.equals(obj));
+    }
 }

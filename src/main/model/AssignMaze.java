@@ -80,7 +80,7 @@ public class AssignMaze {
 
     //REQUIRES: ref is a link to a maze image, w is number of columns and h is the height
     //EFFECTS: returns @D string array based on input maze via ref
-    private String[][] convToMaze(String ref, int w, int h) {
+    public String[][] convToMaze(String ref, int w, int h) {
         try {
             BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + ref));
             BufferedImage scaledImg = (BufferedImage) getScaledImage(inp,w,h);
