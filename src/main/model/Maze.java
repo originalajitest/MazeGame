@@ -80,6 +80,7 @@ public class Maze extends Exception implements Writable {
     //EFFECTS: gets a maze from AssignMaze.java and stores it in maze. Initializes start and end points.
     // Sets default solved and solvedOnce to false. gets a printable maze ready.
     public Maze(int pos) {
+        EventLog.getInstance().logEvent(new Event("\t Maze " + (pos + 1) + " Initialized."));
         maze = assign.assignMaze(pos);
         assignPoints();
         solved = false;
@@ -131,6 +132,7 @@ public class Maze extends Exception implements Writable {
                 }
             }
         }
+        EventLog.getInstance().logEvent(new Event("\t\t Maze start and end points initialized."));
     }
 
     //REQUIRES: maze is initialized to some maze.
@@ -173,6 +175,7 @@ public class Maze extends Exception implements Writable {
     //EFFECTS: initializes player to start point.
     public void initializePlayer() {
         player = new Player(startX, startY);
+        EventLog.getInstance().logEvent(new Event("\t Player initialized at (" + startX + "," + startY + ")"));
     }
 
     //EFFECTS: returns solved is true.

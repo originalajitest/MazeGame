@@ -1,5 +1,7 @@
 package ui;
 
+import model.Event;
+import model.EventLog;
 import model.InvalidInputException;
 import model.Mazes;
 import model.Player;
@@ -7,10 +9,7 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
@@ -71,7 +70,6 @@ public class PickingFrame extends JPanel implements ActionListener {
             String temp = mazes.getColor();
             Field field = Class.forName("java.awt.Color").getField(temp);
             color = (Color)field.get(null);
-            mazes.setColor(temp);
         } catch (Exception ex) {
             color = null;
         }
@@ -89,7 +87,6 @@ public class PickingFrame extends JPanel implements ActionListener {
             String temp = mazes.getColor();
             Field field = Class.forName("java.awt.Color").getField(temp);
             color = (Color)field.get(null);
-            mazes.setColor(temp);
         } catch (Exception ex) {
             color = null;
         }
@@ -100,8 +97,16 @@ public class PickingFrame extends JPanel implements ActionListener {
     //EFFECTS: Runs the first maze picker
     private void createAndShowGUI() {
         //Create and set up the window.
-        frame = new JFrame("New Page");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame = new JFrame("Maze Game");
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                printLog(EventLog.getInstance());
+                System.out.println("GUI closed.");
+                System.exit(0);
+            }
+        });
 
         //Add content to the window.
         running(frame.getContentPane());
@@ -217,7 +222,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                 }
             }
         } else if (e.getActionCommand() == "quit") {
-            System.exit(0);
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         } else if (e.getActionCommand() == "save") {
             saveState();
         }
@@ -288,6 +293,10 @@ public class PickingFrame extends JPanel implements ActionListener {
         container.repaint();
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
+        Gra gra = new Gra(maze);
+        gra.repaint();
+        gra.repaint(100, 100, gra.getWidth(), gra.getHeight());
+
         int width = 400;
         int height = 400;
         if (maze[0].length > 12) {
@@ -318,9 +327,12 @@ public class PickingFrame extends JPanel implements ActionListener {
                 String temp = (String) colorCombo.getSelectedItem();
                 try {
                     Field field = Class.forName("java.awt.Color").getField(temp);
-                    color = (Color)field.get(null);
                     mazes.setColor(temp);
+                    color = (Color)field.get(null);
+                    gra.repaint();
                     colorCombo.transferFocusBackward();
+                    ///!!! this is not called always, sometimes it doesn't log the color. Idk what to do.
+                    ///!!! also visibility is not recorded, do I add a clause in UI to record changes to the visibility?
                 } catch (Exception ex) {
                     color = null;
                 }
@@ -331,6 +343,7 @@ public class PickingFrame extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 visibility = (String) visCombo.getSelectedItem();
+                gra.repaint();
                 visCombo.transferFocus();
             }
         });
@@ -349,13 +362,6 @@ public class PickingFrame extends JPanel implements ActionListener {
 
         b1.addActionListener(this);
         b2.addActionListener(this);
-
-        Gra gra = new Gra(maze);
-        System.out.println(color);
-        gra.repaint();
-        gra.repaint(100, 100, gra.getWidth(), gra.getHeight());
-//        gra.setBounds(100,100,gra.getWidth(), gra.getHeight());
-
 
         JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createTitledBorder("Maze"));
@@ -509,14 +515,12 @@ public class PickingFrame extends JPanel implements ActionListener {
             plX = player.getX();
             plY = player.getY();
 
-            System.out.println("Point A");
             for (int i = 0; i < maze.length; i++) {
                 for (int j = 0; j < maze[0].length; j++) {
                     pickColor(i, j, g);
                     g.fillRect(temp + j * scale, temp2 + i * scale, scale, scale);
                 }
             }
-            System.out.println("Point B");
         }
 
         //Sets the color based on current position, if visibility is a number, then sets it to that and also path enable
@@ -581,6 +585,12 @@ public class PickingFrame extends JPanel implements ActionListener {
         @Override
         public void keyReleased(KeyEvent e) {
 //            System.out.println(e.getKeyCode() + "Key Released");
+        }
+    }
+
+    private void printLog(EventLog el) {
+        for (Event event: el) {
+            System.out.println(event.toString() + "\n");
         }
     }
 

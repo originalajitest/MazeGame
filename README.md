@@ -133,6 +133,86 @@ treasure. These will be assigned to specific numbers so that they are random and
 <li> Then save and quit</li>
 </ul>
 
+## Phase 4: Task 2
+
+Fri Apr 07 18:21:02 PDT 2023: 	Initializing mazes:
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Maze 4 Initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;&emsp;		 Maze start and end points initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Maze 2 Initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;&emsp;		 Maze start and end points initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Maze 1 Initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;&emsp;		 Maze start and end points initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Maze 6 Initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;&emsp;		 Maze start and end points initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Maze 3 Initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;&emsp;		 Maze start and end points initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Maze 5 Initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;&emsp;		 Maze start and end points initialized.
+
+Fri Apr 07 18:21:02 PDT 2023: 	New Game Instance made.
+
+Fri Apr 07 18:21:02 PDT 2023: 	Initializing player for Maze 3
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Player initialized at (40,19)
+
+Fri Apr 07 18:21:02 PDT 2023: 	Initializing player for Maze 1
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Player initialized at (0,0)
+
+Fri Apr 07 18:21:02 PDT 2023: 	Initializing player for Maze 0
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Player initialized at (1,0)
+
+Fri Apr 07 18:21:02 PDT 2023: 	Initializing player for Maze 5
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Player initialized at (1,5)
+
+Fri Apr 07 18:21:02 PDT 2023: 	Initializing player for Maze 2
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Player initialized at (0,0)
+
+Fri Apr 07 18:21:02 PDT 2023: 	Initializing player for Maze 4
+
+Fri Apr 07 18:21:02 PDT 2023: 	&emsp;	 Player initialized at (0,21)
+
+Fri Apr 07 18:21:06 PDT 2023: 	Maze 1 solved.
+
+Fri Apr 07 18:21:10 PDT 2023: 	Maze Wall color changed to blue
+
+Fri Apr 07 18:21:12 PDT 2023: 	Maze 2 solved.
+
+Fri Apr 07 18:21:15 PDT 2023: 	Maze Wall color changed to cyan
+
+Fri Apr 07 18:21:19 PDT 2023: 	Maze Wall color changed to gray
+
+Fri Apr 07 18:21:20 PDT 2023: 	Maze 3 solved.
+
+Fri Apr 07 18:21:28 PDT 2023: 	Maze Wall color changed to pink
+
+Fri Apr 07 18:21:57 PDT 2023: 	Maze 4 solved.
+
+Fri Apr 07 18:22:01 PDT 2023: 	&emsp;	 Cheat Code used.
+
+Fri Apr 07 18:22:01 PDT 2023: 	Maze 5 solved.
+
+Fri Apr 07 18:22:04 PDT 2023: 	&emsp;	 Cheat Code used.
+
+Fri Apr 07 18:22:04 PDT 2023: 	Maze 6 solved.
+
+Fri Apr 07 18:22:04 PDT 2023: 	All mazes solved.
+
 *I will  add more based on program completion and completion of stretch goals.*
 
 

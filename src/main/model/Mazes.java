@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import javax.swing.*;
 import java.util.*;
 
 //Contains the mazes, initializes mazes using Maze.java
@@ -23,6 +24,7 @@ public class Mazes implements Writable {
         initializeMazes();
         setDefaultSolved();
         color = "black";
+        EventLog.getInstance().logEvent(new Event("New Game Instance made."));
     }
 
     //MODIFIES: this
@@ -31,6 +33,7 @@ public class Mazes implements Writable {
         this.mazes = (LinkedList<Maze>) storedData.get("mazes");
         this.arrangement = (ArrayList<Integer>) storedData.get("arrangement");
         this.color = storedData.get("color").toString();
+        EventLog.getInstance().logEvent(new Event("Previous Game Instance loaded."));
     }
 
     //Getter
@@ -41,6 +44,7 @@ public class Mazes implements Writable {
     //Setter
     public void setColor(String inp) {
         color = inp;
+        EventLog.getInstance().logEvent(new Event("Maze Wall color changed to " + color));
     }
 
     //Getter
@@ -65,6 +69,7 @@ public class Mazes implements Writable {
         json.put("arrangement", arrangementToJsonArrangement());
         json.put("mazes", mazesToJsonMazes());
         json.put("color", color);
+        EventLog.getInstance().logEvent(new Event("Game Instance Saved to saveState.json"));
         return json;
     }
 
@@ -90,6 +95,7 @@ public class Mazes implements Writable {
     //MODIFIES: this.mazes
     //EFFECTS: places Maze objects into mazes array each maze no. corresponding to number in arrangement.
     private void initializeMazes() {
+        EventLog.getInstance().logEvent(new Event("Initializing mazes:"));
         mazes = new LinkedList<Maze>();
         Maze mazeTemp;
         int temp;
@@ -107,6 +113,8 @@ public class Mazes implements Writable {
         for (int i = 0; i < mazes.size(); i++) {
             if (mazes.get(i).isNotMaze()) {
                 mazes.get(i).solved();
+                EventLog.getInstance().logEvent(new Event("Maze " + arrangement.get(i) + " set to solved."));
+                //Above is only called during testing, will never see it during normal running.
             }
         }
     }
@@ -121,6 +129,7 @@ public class Mazes implements Writable {
             }
         }
         if (solvedCount == arrangement.size()) {
+            EventLog.getInstance().logEvent(new Event("All mazes solved."));
             return false;
         } else {
             return true;
@@ -131,6 +140,7 @@ public class Mazes implements Writable {
     //MODIFIES: this.mazes
     //EFFECTS: initialize player in given maze number.
     public void initializePlayer(int i) {
+        EventLog.getInstance().logEvent(new Event("Initializing player for Maze " + arrangement.get(i)));
         mazes.get(i).initializePlayer();
     }
 
@@ -147,6 +157,8 @@ public class Mazes implements Writable {
     public void applyMove(int index, String str) {
         mazes.get(index).applyMove(str);
     }
+
+    ///!!!!! should I track each and every move? Cause there will be too many to sort through when reading output.
 
     //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
     // str is one of up,down,right,left
@@ -172,7 +184,11 @@ public class Mazes implements Writable {
     //MODIFIES: this.mazes[index].solved
     //EFFECTS: returns false if maze has just been solved and player is at endpoint. else true
     public boolean solved(int index) {
-        return mazes.get(index).justSolved();
+        boolean temp = mazes.get(index).justSolved();
+        if (!temp) {
+            EventLog.getInstance().logEvent(new Event("Maze " + (arrangement.get(index) + 1) + " solved."));
+        }
+        return temp;
     }
 
     //REQUIRES: maze in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
@@ -180,6 +196,8 @@ public class Mazes implements Writable {
     //EFFECTS: changes solved to false
     public void resetSolved(int index) {
         mazes.get(index).resetSolved();
+        EventLog.getInstance().logEvent(new Event("Player position reset for Maze " + arrangement.get(index)));
+
     }
 
     //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
@@ -188,6 +206,8 @@ public class Mazes implements Writable {
     //Only for debugging and testing
     public void quickSolve(int index) {
         mazes.get(index).quickSolve();
+        EventLog.getInstance().logEvent(new Event("Debugging, player moved to end of Maze "
+                + arrangement.get(index) + " and set maze status to solved"));
     }
 
     //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
@@ -196,6 +216,7 @@ public class Mazes implements Writable {
     //Only for debugging and testing and cheatcode
     public void quickSolve2(int index) {
         mazes.get(index).quickSolve2();
+        EventLog.getInstance().logEvent(new Event("\t Cheat Code used."));
     }
 
 }
