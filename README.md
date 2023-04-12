@@ -2,6 +2,18 @@
 
 ## Current project
 
+Current functionality:
+<ul>
+<li>Can load a new game or an old save</li>
+<li>Can go into any maze, but does not go into one that has been completed before.</li>
+<li>There is an ongoing timer that calculates how long to complete the mazes, it does not account for previous solves.</li>
+<li>You can change the color and this color change persists throughout the mazes.</li>
+<li>You can change the visibility so that you are limited to a set number of blocks around you, for below 3, it assumes the visibility for the see-able path print, but greater than 3 then the program only allows 3 blocks around the path</li>
+<li>You can save the game state at any one point.</li>
+<li>A cheat code has been implemented to solve a maze quickly and beat the game.</li>
+<li>You can easily change the mazes with new pictures which meat a set of requirements, they myst be one a grid layout and each block must have the same width and height as the rest. It must also have two cyan blocks to indicate the start and end points. The you just change the link in AssignMaze and also indicate how many rows and columns it has then the program should do the rest.</li>
+</ul>
+
 <br>
 References:
 <ul>
@@ -213,6 +225,23 @@ Fri Apr 07 18:22:04 PDT 2023: 	Maze 6 solved.
 
 Fri Apr 07 18:22:04 PDT 2023: 	All mazes solved.
 
+
+## Phase 4: Task 3
+
+The design I made for the UML Class diagram is right, but it does not reflect the dependencies fully.
+Especially how the functions relate with each other and which they call in effect. 
+
+Now, in regards to improving my design, I would first try to get full code coverage for my tests (I think that it is currently a server side error and as such I am not able to get the ful 99.5 {the last 0.5 is not worth it}).
+Another improvement would be to move the visibility stuff to the model so you would save it and then call it and it would also be testable.
+Another big thing would be to decrease the various method line as I have one that is 106 line and try to keep them low by factoring out duplicate buttons (there are two but they are in entirely different functions), this would move all buttons outside and will increase overall code length byt also increase readability.
+
+I should also remove all debugging functions I used to ensure reliability and security of the program. I should also make all functions private and only accessible as the EventLog functions to improve security.
+It would also be helpful to break down the Picking frame class into two separate classes to increase readability.
+Another one would be to save the timer so that we can add it later.
+
+Another interesting thing would be to make the walls with better textures instead of one solid color, and I plan to do this, but just don't have time currently.
+
+<br>
 *I will  add more based on program completion and completion of stretch goals.*
 
 

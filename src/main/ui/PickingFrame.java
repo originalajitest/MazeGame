@@ -331,8 +331,6 @@ public class PickingFrame extends JPanel implements ActionListener {
                     color = (Color)field.get(null);
                     gra.repaint();
                     colorCombo.transferFocusBackward();
-                    ///!!! this is not called always, sometimes it doesn't log the color. Idk what to do.
-                    ///!!! also visibility is not recorded, do I add a clause in UI to record changes to the visibility?
                 } catch (Exception ex) {
                     color = null;
                 }
