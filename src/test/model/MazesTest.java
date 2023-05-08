@@ -24,7 +24,7 @@ class MazesTest {
         arrangement.add(3);
         arrangement.add(4);
         arrangement.add(5);
-        arrangement.add(6);//This one returns the default maze, just in-case necessary, it will never be called again.
+        arrangement.add(7);//This one returns the default maze, just in-case necessary, it will never be called again.
 
         mazeRef = new Mazes(arrangement);
     }

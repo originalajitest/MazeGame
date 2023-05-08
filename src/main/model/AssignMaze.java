@@ -30,6 +30,7 @@ public class AssignMaze {
     private String maze4ref = "/images/maze4.png";
     private String maze5ref = "/images/maze5.png";
     private String maze6ref = "/images/maze6.png";
+    private String maze7ref = "/images/maze7.png";
 
 
 
@@ -62,6 +63,8 @@ public class AssignMaze {
                 return convToMaze(maze5ref, 41, 25);
             case 5:
                 return convToMaze(maze6ref, 51, 41);
+            case 6:
+                return convToMaze(maze7ref, 121, 61);
             default:
                 return mazeClone(emptyMaze);
         }

@@ -131,6 +131,7 @@ public class StartFrame extends JPanel implements ActionListener {
             System.exit(0);
         }
         frame.setEnabled(false);
+        frame.setVisible(false);
         new PickingFrame(mazes, arrangement);
     }
 
@@ -172,9 +173,9 @@ public class StartFrame extends JPanel implements ActionListener {
     //EFFECTS: starts a mazes instance and stores it in a list, a new game
     private static void defaultInitialize() {
         int temp;
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             do {
-                temp = rand.nextInt(6);
+                temp = rand.nextInt(7);
             } while (arrangement.contains(temp));
             arrangement.add(temp);
         }
