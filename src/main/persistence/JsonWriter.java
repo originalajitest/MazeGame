@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 public class JsonWriter {
     private static final int TAB = 4;
     private PrintWriter writer;
-    private String destination;
+    private final String destination;
 
     // EFFECTS: constructs writer to write to destination file
     public JsonWriter(String destination) {
@@ -27,6 +27,12 @@ public class JsonWriter {
     // EFFECTS: writes JSON representation of mazes to file
     public void write(Mazes mazes) {
         JSONObject json = mazes.toJson();
+        saveToFile(json.toString(TAB));
+    }
+
+    public void write(Mazes mazes, long time) {
+        JSONObject json = mazes.toJson();
+        json.put("time", time);
         saveToFile(json.toString(TAB));
     }
 

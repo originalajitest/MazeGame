@@ -5,7 +5,6 @@ import model.Mazes;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
-import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
@@ -39,7 +38,7 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
     static Mazes mazes;
 
-    static ArrayList<Integer> arrangement = new ArrayList<Integer>();
+    static ArrayList<Integer> arrangement = new ArrayList<>();
 
     static boolean keepGoing = true;
 
@@ -47,20 +46,7 @@ public class Main {
     private static JsonWriter jsonWriter;
     private static JsonReader jsonReader;
 
-    //REQUIRES: first input is one of l, n, q
-    //EFFECTS: runs the program, when this terminates the program also terminates.
-//    @SuppressWarnings("methodlength") //use full whenever
     public static void main(String[] args) {
-//        System.out.println("Pick one of the following");
-//        System.out.println("\t g - Use Gui");
-//        System.out.println("\t c - Use Cli");
-//        String inp = sc.next();
-//
-//        if (inp.equalsIgnoreCase("g")) {
-//            StartFrame begin = new StartFrame(JSON_STORE);
-//        } else if (inp.equalsIgnoreCase("c")) {
-//            runCLI();
-//        }
         runCLI();
     }
 
@@ -249,7 +235,7 @@ public class Main {
         }
     }
 
-    //EFFECTS: returns true if the maze in index i has been solved
+    //EFFECTS: returns true if the maze in index i has been status solved
     private static boolean checkSolved(int i) {
         if (mazes.checkSolved(i)) {
             System.out.println("This maze has already been solved");

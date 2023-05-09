@@ -2,7 +2,6 @@ package ui;
 
 import model.Mazes;
 import persistence.JsonReader;
-import persistence.JsonWriter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -21,12 +20,14 @@ public class StartFrame extends JPanel implements ActionListener {
 
     static Random rand = new Random();
     static Mazes mazes;
-    static ArrayList<Integer> arrangement = new ArrayList<Integer>();
+    static ArrayList<Integer> arrangement = new ArrayList<>();
 
     private static final String data = "./data/saveState.json";
-    private static JsonReader jsonReader;
+    static JsonReader jsonReader;
 
     JFrame frame;
+
+    Long time;
 
     //Calls the class
     public static void main(String[] args) {
@@ -69,7 +70,7 @@ public class StartFrame extends JPanel implements ActionListener {
         b1.setAlignmentX(Component.CENTER_ALIGNMENT);
         JsonReader reader = new JsonReader(data);
         try {
-            Map<String, Object> data = reader.read();
+            Map<String, Object> data = reader.read();//Checks if there is a save state to read from.
             b1.setEnabled(true);
         } catch (IOException e) {
             b1.setEnabled(false);
@@ -123,16 +124,20 @@ public class StartFrame extends JPanel implements ActionListener {
     //EFFECTS: deals with button clicks, quit if quit, else load new or old state then pass information forward to
     // PickingFrame.
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand() == "load") {
+        if (e.getActionCommand().equals("load")) {
             loadState();
-        } else if (e.getActionCommand() == "newGame") {
+        } else if (e.getActionCommand().equals("newGame")) {
             defaultInitialize();
-        } else if (e.getActionCommand() == "quit") {
+        } else if (e.getActionCommand().equals("quit")) {
             System.exit(0);
         }
         frame.setEnabled(false);
         frame.setVisible(false);
-        new PickingFrame(mazes, arrangement);
+        if (time != null) {
+            new PickingFrame(mazes, arrangement, time);
+        } else {
+            new PickingFrame(mazes, arrangement);
+        }
     }
 
     /**
@@ -156,12 +161,13 @@ public class StartFrame extends JPanel implements ActionListener {
 
     // MODIFIES: this
     // EFFECTS: loads saveState from file to mazes.
-    private static void loadState() {
+    private void loadState() {
         try {
             jsonReader = new JsonReader(data);
             Map<String, Object> storedData = jsonReader.read();
             mazes = new Mazes(storedData);
             arrangement = mazes.getArrangement();
+            time = Long.valueOf((Integer) storedData.get("time"));
             System.out.println("Loaded from " + data);
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + data);
@@ -189,6 +195,10 @@ public class StartFrame extends JPanel implements ActionListener {
         for (int i = 0; i < arrangement.size(); i++) {
             mazes.initializePlayer(i);
         }
+    }
+
+    public StartFrame(int temp) {
+        JFileChooser abc;
     }
 
 }

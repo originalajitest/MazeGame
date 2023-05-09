@@ -22,11 +22,11 @@ public class PickingFrame extends JPanel implements ActionListener {
     private static JsonWriter jsonWriter;
     private static final String data = "./data/saveState.json";
 
-    static Mazes mazes;
-    static ArrayList<Integer> arrange = new ArrayList<Integer>();
-    static Color color;
-    static Player player;
-    static String visibility;
+    Mazes mazes;
+    ArrayList<Integer> arrange;
+    Color color;
+    Player player;
+    String visibility;
     static int startX;
     static int startY;
     static int endX;
@@ -35,9 +35,9 @@ public class PickingFrame extends JPanel implements ActionListener {
     private int index;
 
     JFrame frame;
-    private JComboBox inputsCombo;
-    private JComboBox colorCombo;
-    private JComboBox visCombo;
+    private JComboBox<String> inputsCombo;
+    private JComboBox<String> colorCombo;
+    private JComboBox<String> visCombo;
 
     protected int scale = 20;
     protected boolean showPath = false;
@@ -45,12 +45,12 @@ public class PickingFrame extends JPanel implements ActionListener {
     private Timer timer;
     private JLabel label;
     private long startTime;
-    private long previousTime;
+    private final long previousTime;
     private long elapsed;
 
-    private String[] inputs = {"Maze 1", "Maze 2", "Maze 3", "Maze 4", "Maze 5", "Maze 6", "Maze 7"};
-    private String[] colors = {"black", "blue", "cyan", "gray", "pink", "yellow", "magenta"};
-    private String[] visPick = {"@A", "1", "2", "3", "4", "5", "8", "10"};
+    private final String[] inputs = {"Maze 1", "Maze 2", "Maze 3", "Maze 4", "Maze 5", "Maze 6", "Maze 7"};
+    private final String[] colors = {"black", "blue", "cyan", "gray", "pink", "yellow", "magenta"};
+    private final String[] visPick = {"@A", "1", "2", "3", "4", "5", "8", "10"};
 
     ArrayList<Map<String, Integer>> moves;
 
@@ -102,7 +102,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosed(WindowEvent e) {
+            public void windowClosing(WindowEvent e) {
                 printLog(EventLog.getInstance());
                 System.out.println("GUI closed.");
                 System.exit(0);
@@ -126,11 +126,11 @@ public class PickingFrame extends JPanel implements ActionListener {
         } else {
             frame.getContentPane().removeAll();
             JLabel label1 = new JLabel("Congratulations! All mazes complete :D");
-            label1.setFont(new Font("Serif", Font.TYPE1_FONT, 20));
+            label1.setFont(new Font("Serif", Font.BOLD, 20));
             label1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel label2 = new JLabel("\n Time:");
-            label2.setFont(new Font("Serif", Font.TYPE1_FONT, 20));
+            label2.setFont(new Font("Serif", Font.BOLD, 20));
 
             label = new JLabel("00:00:00.000");
             long elapsed = previousTime;
@@ -138,7 +138,7 @@ public class PickingFrame extends JPanel implements ActionListener {
             int seconds = (int) (elapsed / 1000) % 60;
             int millis = (int) (elapsed % 1000);
             label.setText(String.format("%02d:%02d:%03d", minutes, seconds, millis));
-            label.setFont(new Font("Serif", Font.TYPE1_FONT, 20));
+            label.setFont(new Font("Serif", Font.BOLD, 20));
 
             JPanel panel = new JPanel();
             panel.setBorder(BorderFactory.createTitledBorder("Done :D"));
@@ -169,7 +169,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
         quit = new ImageIcon(getScaledImage(quit.getImage(), 20, 20));
 
-        inputsCombo = new JComboBox(inputs);
+        inputsCombo = new JComboBox<>(inputs);
 
         b1 = new JButton("Continue");
         Font font = b1.getFont().deriveFont(Font.PLAIN);
@@ -195,51 +195,59 @@ public class PickingFrame extends JPanel implements ActionListener {
     //EFFECTS: calls the maze based on the JComboBox selection else quits or saves
     @SuppressWarnings("methodlength")
     public void actionPerformed(ActionEvent e) {
-        String selection = inputsCombo.getSelectedItem().toString();
-        if (e.getActionCommand() == "continue") {
-            if (selection == "Maze 1") {
-                if (!mazes.checkSolved(arrange.indexOf(0))) {
-                    goToMazes(0);
-                }
-            } else if (selection == "Maze 2") {
-                if (!mazes.checkSolved(arrange.indexOf(1))) {
-                    goToMazes(1);
-                }
-            } else if (selection == "Maze 3") {
-                if (!mazes.checkSolved(arrange.indexOf(2))) {
-                    goToMazes(2);
-                }
-            } else if (selection == "Maze 4") {
-                if (!mazes.checkSolved(arrange.indexOf(3))) {
-                    goToMazes(3);
-                }
-            } else if (selection == "Maze 5") {
-                if (!mazes.checkSolved(arrange.indexOf(4))) {
-                    goToMazes(4);
-                }
-            } else if (selection == "Maze 6") {
-                if (!mazes.checkSolved(arrange.indexOf(5))) {
-                    goToMazes(5);
-                }
-            } else if (selection == "Maze 7") {
-                if (!mazes.checkSolved(arrange.indexOf(6))) {
-                    goToMazes(6);
-                    scale = 12;
-                }
+        String selection = (String) inputsCombo.getSelectedItem();
+        if ("continue".equals(e.getActionCommand())) {
+            switch (selection) {
+                case "Maze 1":
+                    if (!mazes.checkSolved(arrange.indexOf(0))) {
+                        goToMazes(0);
+                    }
+                    break;
+                case "Maze 2":
+                    if (!mazes.checkSolved(arrange.indexOf(1))) {
+                        goToMazes(1);
+                    }
+                    break;
+                case "Maze 3":
+                    if (!mazes.checkSolved(arrange.indexOf(2))) {
+                        goToMazes(2);
+                    }
+                    break;
+                case "Maze 4":
+                    if (!mazes.checkSolved(arrange.indexOf(3))) {
+                        goToMazes(3);
+                    }
+                    break;
+                case "Maze 5":
+                    if (!mazes.checkSolved(arrange.indexOf(4))) {
+                        goToMazes(4);
+                    }
+                    break;
+                case "Maze 6":
+                    if (!mazes.checkSolved(arrange.indexOf(5))) {
+                        goToMazes(5);
+                    }
+                    break;
+                case "Maze 7":
+                    if (!mazes.checkSolved(arrange.indexOf(6))) {
+                        goToMazes(6);
+                        scale = 12;
+                    }
+                    break;
             }
-        } else if (e.getActionCommand() == "quit") {
-            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSED));
-        } else if (e.getActionCommand() == "save") {
+        } else if ("quit".equals(e.getActionCommand())) {
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+        } else if ("save".equals(e.getActionCommand())) {
             saveState();
         }
         frame.setVisible(true);
     }
 
     // EFFECTS: saves the current state of mazes to file
-    private static void saveState() {
+    private void saveState() {
         try {
             jsonWriter.open();
-            jsonWriter.write(mazes);
+            jsonWriter.write(mazes, elapsed);
             jsonWriter.close();
             System.out.println("Saved to " + data);
         } catch (FileNotFoundException e) {
@@ -327,12 +335,12 @@ public class PickingFrame extends JPanel implements ActionListener {
             frame.setMinimumSize(new Dimension(400, 400));
         }
 
-        colorCombo = new JComboBox(colors);
+        colorCombo = new JComboBox<>(colors);
         colorCombo.setSelectedIndex(java.util.Arrays.asList(colors).indexOf(mazes.getColor()));
         colorCombo.setMaximumSize(new Dimension(80, 30));
         colorCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        visCombo = new JComboBox(visPick);
+        visCombo = new JComboBox<>(visPick);
         visCombo.setSelectedIndex(java.util.Arrays.asList(visPick).indexOf(visibility));
         visCombo.setMaximumSize(new Dimension(80, 30));
         visCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -369,7 +377,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         b1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
-        quit = new ImageIcon(getScaledImage(quit.getImage(), 20, 20));
+        quit = new ImageIcon(getScaledImage(quit.getImage(), 19, 19));
         JButton b2 = new JButton("Quit", quit);
         b2.setActionCommand("quit");
         b2.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -426,7 +434,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                 mazes.applyMove(index, "right");
                 moved = true;
             } catch (InvalidInputException e) {
-                e.getMessage();
+                //No use here
             }
         } else if (code == KeyEvent.VK_LEFT) {
             try {
@@ -434,7 +442,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                 mazes.applyMove(index, "left");
                 moved = true;
             } catch (InvalidInputException e) {
-                e.getMessage();
+                //No use here
             }
         } else if (code == KeyEvent.VK_UP) {
             try {
@@ -442,7 +450,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                 mazes.applyMove(index, "up");
                 moved = true;
             } catch (InvalidInputException e) {
-                e.getMessage();
+                //No use here
             }
         } else if (code == KeyEvent.VK_DOWN) {
             try {
@@ -450,7 +458,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                 mazes.applyMove(index, "down");
                 moved = true;
             } catch (InvalidInputException e) {
-                e.getMessage();
+                //No use here
             }
         }
         if (moved) {
@@ -704,12 +712,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                     for (Map<String, Integer> move : moves) {
                         double distMoves = Math.sqrt(Math.pow((move.get("posX") - j), 2)
                                 + Math.pow((move.get("posY") - i), 2));
-                        int maxVis;
-                        if (vis > 3) {
-                            maxVis = 3;
-                        } else {
-                            maxVis = vis;
-                        }
+                        int maxVis = Math.min(vis,3);
                         if (distMoves < maxVis) {
                             black = false;
                             break;
@@ -719,7 +722,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                         g.setColor(Color.black);
                     }
                 } catch (NumberFormatException e) {
-                    e.getMessage();
+                    //Ignore the msg, is oly at the error of the math operations.
                 }
             }
         }

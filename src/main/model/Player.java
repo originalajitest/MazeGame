@@ -1,6 +1,5 @@
 package model;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
@@ -33,8 +32,8 @@ public class Player implements Writable {
     //MODIFIES: this
     //EFFECTS: gets x and y from json and sets posX and posY to gotten values.
     public Player(Object json) {
-        this.posX = (int) ((HashMap) json).get("posX");
-        this.posY = (int) ((HashMap) json).get("posY");
+        this.posX = (int) ((HashMap<?, ?>) json).get("posX");
+        this.posY = (int) ((HashMap<?, ?>) json).get("posY");
     }
 
     //EFFECTS: returns current posX

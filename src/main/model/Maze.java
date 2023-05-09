@@ -6,7 +6,6 @@ import persistence.Writable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 //added throwable for NullPointerException, but found another solution.
@@ -97,18 +96,18 @@ public class Maze extends Exception implements Writable {
         this.startY = (int) json.get("startY");
         this.solved = (boolean) json.get("solved");
         this.solvedOnce = (boolean) json.get("solvedOnce");
-        toMazeArray((ArrayList) json.get("maze"));
+        toMazeArray((ArrayList<?>) json.get("maze"));
         this.player = new Player(json.get("player"));
         readyPrint();
     }
 
     //MODIFIES: this.maze
     //EFFECTS: converts maze JSON object to maze String[][]
-    private void toMazeArray(ArrayList json) {
-        maze = new String[json.size()][((ArrayList) json.get(0)).size()];
+    private void toMazeArray(ArrayList<?> json) {
+        maze = new String[json.size()][((ArrayList<?>) json.get(0)).size()];
         for (int i = 0; i < json.size(); i++) {
-            for (int j = 0; j < ((ArrayList) json.get(0)).size(); j++) {
-                Object temp = ((ArrayList) json.get(i)).get(j);
+            for (int j = 0; j < ((ArrayList<?>) json.get(0)).size(); j++) {
+                Object temp = ((ArrayList<?>) json.get(i)).get(j);
                 maze[i][j] = (String) temp;
             }
         }
@@ -116,7 +115,7 @@ public class Maze extends Exception implements Writable {
 
     //REQUIRES: Maze is a 2D array, it has at least two entries (1 row & 2 columns)
     //MODIFIES: this (startX, startY, endX, endY)
-    //EFFECTS: initializes start and end points. Labeled by two null 's. Changes these back to "T"
+    //EFFECTS: initializes start and end points. Labeled by two nulls. Changes these back to "T"
     private void assignPoints() {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
@@ -137,23 +136,23 @@ public class Maze extends Exception implements Writable {
 
     //REQUIRES: maze is initialized to some maze.
     //MODIFIES: this.printMaze
-    //EFFECTS: Produces a sring which is like the maze, without player.
+    //EFFECTS: Produces a string which is like the maze, without player.
     //used For Debugging as it can show any maze and also used as ref for later code.
     public void readyPrint() {
         printMaze = "";
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
                 if (j == startX && i == startY) {
-                    printMaze = printMaze + "S ";
+                    printMaze = printMaze.concat("S ");
                 } else if (j == endX && i == endY) {
-                    printMaze = printMaze + "E ";
+                    printMaze = printMaze.concat("E ");
                 } else if (maze[i][j].equals("T")) {
-                    printMaze = printMaze + "  ";
+                    printMaze = printMaze.concat("  ");
                 } else {
-                    printMaze = printMaze + "0 ";
+                    printMaze = printMaze.concat("0 ");
                 }
             }
-            printMaze = printMaze + "\n";
+            printMaze = printMaze.concat("\n");
         }
     }
 
@@ -191,18 +190,18 @@ public class Maze extends Exception implements Writable {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
                 if ((j == player.getX()) && (i == player.getY())) {
-                    printMazeWPlayer = printMazeWPlayer + "P ";
+                    printMazeWPlayer = printMazeWPlayer.concat("P ");
                 } else if (j == startX && i == startY) {
-                    printMazeWPlayer = printMazeWPlayer + "S ";
+                    printMazeWPlayer = printMazeWPlayer.concat("S ");
                 } else if (j == endX && i == endY) {
-                    printMazeWPlayer = printMazeWPlayer + "E ";
+                    printMazeWPlayer = printMazeWPlayer.concat("E ");
                 } else if (maze[i][j].equals("T")) {
-                    printMazeWPlayer = printMazeWPlayer + "  ";
+                    printMazeWPlayer = printMazeWPlayer.concat("  ");
                 } else {
-                    printMazeWPlayer = printMazeWPlayer + "0 ";
+                    printMazeWPlayer = printMazeWPlayer.concat("0 ");
                 }
             }
-            printMazeWPlayer = printMazeWPlayer + "\n";
+            printMazeWPlayer = printMazeWPlayer.concat("\n");
         }
     }
 
@@ -286,7 +285,7 @@ public class Maze extends Exception implements Writable {
         }
     }
 
-    //EFFECTS: changes solved back to false so it can be done again.
+    //EFFECTS: changes solved back to false so maze can be solved again.
     // Second line is only necessary for the testing phase.
     public void resetSolved() {
         solved = false;
@@ -301,7 +300,7 @@ public class Maze extends Exception implements Writable {
     }
 
     //EFFECTS: sets player to end points
-    //Only for debugging and testing and cheatcode
+    //Only for debugging and testing and CheatCode
     public void quickSolve2() {
         player.setXAndY(endX, endY);
     }

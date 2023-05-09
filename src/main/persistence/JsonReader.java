@@ -1,7 +1,6 @@
 package persistence;
 
 import model.Maze;
-import model.Mazes;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,7 +12,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class JsonReader {
-    private String source;
+    private final String source;
 
     // EFFECTS: constructs reader to read from source file
     public JsonReader(String source) {
@@ -53,6 +52,7 @@ public class JsonReader {
         }
         ans.put("mazes", mazes);
         ans.put("color", jsonObject.get("color"));
+        ans.put("time", jsonObject.get("time"));
         return ans;
     }
 

@@ -1,5 +1,6 @@
 package model;
 
+import model.Event;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,6 @@ public class EventTest {
 
     @Test
     public void testToString() {
-        assertEquals(d.toString() + "\n" + "Sensor open at door", e.toString());
+        assertEquals(d.toString() + ": \t" + "Sensor open at door", e.toString());
     }
 }

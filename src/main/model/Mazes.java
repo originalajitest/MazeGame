@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
-import javax.swing.*;
 import java.util.*;
 
 //Contains the mazes, initializes mazes using Maze.java
@@ -18,7 +17,7 @@ public class Mazes implements Writable {
 
     //REQUIRES: order is not empty and is an integer list
     //MODIFIES: this
-    //EFFECTS: copys order into arrangement and calls initializeMazes() then sets empty mazes to solved.
+    //EFFECTS: copies order into arrangement and calls initializeMazes() then sets all empty mazes to status solved.
     public Mazes(ArrayList<Integer> order) {
         this.arrangement = order;
         initializeMazes();
@@ -96,7 +95,7 @@ public class Mazes implements Writable {
     //EFFECTS: places Maze objects into mazes array each maze no. corresponding to number in arrangement.
     private void initializeMazes() {
         EventLog.getInstance().logEvent(new Event("Initializing mazes:"));
-        mazes = new LinkedList<Maze>();
+        mazes = new LinkedList<>();
         Maze mazeTemp;
         int temp;
         for (int i = 0; i < arrangement.size(); i++) {
@@ -108,7 +107,7 @@ public class Mazes implements Writable {
 
     //REQUIRES: mazes have been initialized.
     //MODIFIES: this.mazes[].solved
-    //EFFECTS: goes through the mazes and sets empty mazes to solved.
+    //EFFECTS: goes through the mazes and sets empty mazes to status solved.
     private void setDefaultSolved() {
         for (int i = 0; i < mazes.size(); i++) {
             if (mazes.get(i).isNotMaze()) {
@@ -136,7 +135,7 @@ public class Mazes implements Writable {
         }
     }
 
-    //REQUIRES: i is and int, and 0 <= i <= arrangement.size()
+    //REQUIRES: var i is an int, and 0 <= i <= arrangement.size()
     //MODIFIES: this.mazes
     //EFFECTS: initialize player in given maze number.
     public void initializePlayer(int i) {
@@ -213,7 +212,7 @@ public class Mazes implements Writable {
     //REQUIRES: player in index has been initialized; index is an int, and 0 <= index <= arrangement.size();
     //MODIFIES: this.mazes[index].player
     //EFFECTS: moves player to the end of the maze
-    //Only for debugging and testing and cheatcode
+    //Only for debugging and testing and CheatCode
     public void quickSolve2(int index) {
         mazes.get(index).quickSolve2();
         EventLog.getInstance().logEvent(new Event("\t Cheat Code used."));
