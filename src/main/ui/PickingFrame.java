@@ -54,6 +54,9 @@ public class PickingFrame extends JPanel implements ActionListener {
 
     ArrayList<Map<String, Integer>> moves;
 
+    Gra gra;
+    boolean notSolved = true;
+
     boolean hp = false;
     boolean ep = false;
     boolean sp = false;
@@ -295,11 +298,9 @@ public class PickingFrame extends JPanel implements ActionListener {
         visibility = "@A";
 
         container.removeAll();
-        container.repaint();
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
-        Gra gra = new Gra(maze);
-        gra.repaint();
+        gra = new Gra(maze);
         gra.repaint(100, 100, gra.getWidth(), gra.getHeight());
 
         timer.addActionListener(new ActionListener() {
@@ -428,6 +429,11 @@ public class PickingFrame extends JPanel implements ActionListener {
         boolean moved = false;
         cheat(code);
         cheat2(code);
+        if (!notSolved) {
+            frame.setEnabled(false);
+            frame.setVisible(false);
+            new PickingFrame(mazes, arrange, elapsed);
+        }
         if (code == KeyEvent.VK_RIGHT) {
             try {
                 mazes.possibleMove(index, "right");
@@ -462,20 +468,18 @@ public class PickingFrame extends JPanel implements ActionListener {
             }
         }
         if (moved) {
-            frame.repaint();
             Map<String, Integer> temp = new HashMap<>();
             temp.put("posX", player.getX());
             temp.put("posY", player.getY());
             moves.add(temp);
         }
         boolean temp = mazes.solved(index);
-        if (!temp) {
+        if (!temp && notSolved) {
             long now = System.currentTimeMillis();
             long elapsed = (now - startTime) + previousTime;
             timer.stop();
-            frame.setEnabled(false);
-            frame.setVisible(false);
-            new PickingFrame(mazes, arrange, elapsed);
+            notSolved = false;
+            frame.repaint();
         }
     }
 

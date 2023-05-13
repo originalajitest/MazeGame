@@ -185,7 +185,19 @@ public class Mazes implements Writable {
     public boolean solved(int index) {
         boolean temp = mazes.get(index).justSolved();
         if (!temp) {
-            EventLog.getInstance().logEvent(new Event("Maze " + (arrangement.get(index) + 1) + " solved."));
+            Event solve = new Event("Maze " + (arrangement.get(index) + 1) + " solved.");
+            String desc = solve.getDescription();
+            boolean open = true;
+            for (Iterator<Event> it = EventLog.getInstance().iterator(); it.hasNext(); ) {
+                Event inst = it.next();
+                if (inst.getDescription().equals(desc)) {
+                    open = false;
+                    break;
+                }
+            }
+            if (open) {
+                EventLog.getInstance().logEvent(solve);
+            }
         }
         return temp;
     }
