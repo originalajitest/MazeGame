@@ -57,13 +57,6 @@ public class PickingFrame extends JPanel implements ActionListener {
     Gra gra;
     boolean notSolved = true;
 
-    boolean hp = false;
-    boolean ep = false;
-    boolean sp = false;
-    boolean op = false;
-    boolean yp = false;
-    boolean ap = false;
-
     //Constructor for starting from StartFrame
     public PickingFrame(Mazes mazes, ArrayList<Integer> arrange) {
         this.mazes = mazes;
@@ -425,7 +418,7 @@ public class PickingFrame extends JPanel implements ActionListener {
     // If player at end then calls a new instance of PickingFrame where current maze is solved, sends over time as well
     // Also checks if cheatCode entered correctly
     @SuppressWarnings("methodlength")
-    private void move(int code) {
+    private void move(int code) throws InvalidInputException {
         boolean moved = false;
         cheat(code);
         cheat2(code);
@@ -435,37 +428,21 @@ public class PickingFrame extends JPanel implements ActionListener {
             new PickingFrame(mazes, arrange, elapsed);
         }
         if (code == KeyEvent.VK_RIGHT) {
-            try {
-                mazes.possibleMove(index, "right");
-                mazes.applyMove(index, "right");
-                moved = true;
-            } catch (InvalidInputException e) {
-                //No use here
-            }
+            mazes.possibleMove(index, "right");
+            mazes.applyMove(index, "right");
+            moved = true;
         } else if (code == KeyEvent.VK_LEFT) {
-            try {
-                mazes.possibleMove(index, "left");
-                mazes.applyMove(index, "left");
-                moved = true;
-            } catch (InvalidInputException e) {
-                //No use here
-            }
+            mazes.possibleMove(index, "left");
+            mazes.applyMove(index, "left");
+            moved = true;
         } else if (code == KeyEvent.VK_UP) {
-            try {
-                mazes.possibleMove(index, "up");
-                mazes.applyMove(index, "up");
-                moved = true;
-            } catch (InvalidInputException e) {
-                //No use here
-            }
+            mazes.possibleMove(index, "up");
+            mazes.applyMove(index, "up");
+            moved = true;
         } else if (code == KeyEvent.VK_DOWN) {
-            try {
-                mazes.possibleMove(index, "down");
-                mazes.applyMove(index, "down");
-                moved = true;
-            } catch (InvalidInputException e) {
-                //No use here
-            }
+            mazes.possibleMove(index, "down");
+            mazes.applyMove(index, "down");
+            moved = true;
         }
         if (moved) {
             Map<String, Integer> temp = new HashMap<>();
@@ -473,15 +450,24 @@ public class PickingFrame extends JPanel implements ActionListener {
             temp.put("posY", player.getY());
             moves.add(temp);
         }
-        boolean temp = mazes.solved(index);
-        if (!temp && notSolved) {
-            long now = System.currentTimeMillis();
-            long elapsed = (now - startTime) + previousTime;
-            timer.stop();
-            notSolved = false;
-            frame.repaint();
+        if (notSolved) {
+            boolean temp = mazes.solved(index);
+            if (!temp) {
+                long now = System.currentTimeMillis();
+                elapsed = (now - startTime) + previousTime;
+                timer.stop();
+                notSolved = false;
+                frame.repaint();
+            }
         }
     }
+
+    boolean hp = false;
+    boolean ep = false;
+    boolean sp = false;
+    boolean op = false;
+    boolean yp = false;
+    boolean ap = false;
 
     //MODIFIES: this (mazes.mazes[index].player)
     //EFFECTS: cheat code ;)
@@ -578,9 +564,16 @@ public class PickingFrame extends JPanel implements ActionListener {
         int plX;
         int plY;
         int fixedDist = 3;
+        ArrayDeque<Point> dq;
+        HashSet<Point> beenTo;
 
         Gra(String[][] inp) {
             maze = inp;
+            beenTo = new HashSet<>();
+            dq = new ArrayDeque<>();
+            recurse(startX, startY, beenTo, dq);
+            dq.removeLast();
+            dq.removeFirst();
         }
 
         //Calls paintComponent and also sets the maze graphics
@@ -598,12 +591,12 @@ public class PickingFrame extends JPanel implements ActionListener {
             plX = player.getX();
             plY = player.getY();
 
-            HashSet<Point> beenTo = new HashSet<>();
-            ArrayDeque<Point> dq = new ArrayDeque<>();
-            recurse(startX, startY, beenTo, dq);
-            dq.removeLast();
-            dq.removeFirst();
-            dq.remove(new Point(plX, plY));
+            Point plPoint = new Point(plX, plY);
+            boolean contained = false;
+            if (dq.contains(plPoint)) {
+                dq.remove(plPoint);
+                contained = true;
+            }
             acc++;
             float s = Math.abs((acc % 50) / 50f - 0.5f);
 
@@ -614,14 +607,17 @@ public class PickingFrame extends JPanel implements ActionListener {
                     int curY = temp2 + i * scale;
                     if (showPath) {
                         if (dq.contains(new Point(j, i))) {
-                            g.setColor(new Color(
-                                    s * curX / (float) getWidth(),
-                                    (1f - s) * curY / (float) getHeight(),
-                                    1f));
+                            float red = Math.abs((1f - s) * curX / (float) getWidth() - 1f);
+                            float green = Math.abs((1f - s) * curY / (float) getHeight() - 1f);
+                            float blue = Math.abs((red + green) / 2 - 1f);
+                            g.setColor(new Color(red, green, blue));
                         }
                     }
                     g.fillRect(curX, curY, scale, scale);
                 }
+            }
+            if (contained) {
+                dq.add(plPoint);
             }
         }
 
@@ -635,9 +631,12 @@ public class PickingFrame extends JPanel implements ActionListener {
             if (startX == endX && startY == endY) {
                 curPath.addLast(new Point(startX, startY));
                 return true;
+                //This code will never run due to how the mazes are structured
             } else if (startX < 0 || startX >= maze[0].length || startY < 0 || startY >= maze.length
                     || maze[startY][startX].equals("F")) {
                 return false;
+                //This code should also never run as mazes have start's and end's initialized from nulls' and are set
+                // to "T" once found, they are always within boundaries of the 2D Maze array
             }
             curPath.addLast(new Point(startX, startY));
             boolean found = false;
@@ -726,13 +725,13 @@ public class PickingFrame extends JPanel implements ActionListener {
                         g.setColor(Color.black);
                     }
                 } catch (NumberFormatException e) {
-                    //Ignore the msg, is oly at the error of the math operations.
+                    //Ignore the msg, is only at the error of the math operations.
                 }
             }
         }
     }
 
-    //Handles key Inputs used ot move the player
+    //Handles key Inputs used to move the player and everything else
     private class KeyHandler implements KeyListener {
 
         @Override
@@ -742,7 +741,11 @@ public class PickingFrame extends JPanel implements ActionListener {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            move(e.getKeyCode());
+            try {
+                move(e.getKeyCode());
+            } catch (InvalidInputException exception) {
+                //Ignore
+            }
         }
 
         @Override

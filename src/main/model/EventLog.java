@@ -42,7 +42,19 @@ public class EventLog implements Iterable<Event> {
      * @param e the event to be added
      */
     public void logEvent(Event e) {
-        events.add(e);
+        boolean open = true;
+        String desc = e.getDescription();
+        for (Iterator<Event> it = iterator(); it.hasNext(); ) {
+            Event inst = it.next();
+            if (inst.getDescription().equals(desc)) {
+                open = false;
+                break;
+            }
+        }
+        if (open) {
+            events.add(e);
+        }
+        //Original was only events.add, I added code to ensure that it does not log duplicate events
     }
 
     /**
