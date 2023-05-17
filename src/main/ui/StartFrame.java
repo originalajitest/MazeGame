@@ -1,15 +1,20 @@
 package ui;
 
+import model.Event;
+import model.EventLog;
+import model.ImageFilter;
 import model.Mazes;
 import persistence.JsonReader;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 //This is where the user picks where to go into a new game or an old saved game state.
@@ -17,6 +22,9 @@ public class StartFrame extends JPanel implements ActionListener {
     protected static JButton b1;
     protected static JButton b2;
     protected static JButton b3;
+    protected static JButton b4;
+    protected static JButton openButton;
+    protected static JButton saveButton;
 
     static Random rand = new Random();
     static Mazes mazes;
@@ -26,6 +34,18 @@ public class StartFrame extends JPanel implements ActionListener {
     static JsonReader jsonReader;
 
     JFrame frame;
+    JFileChooser fc;
+    JTextArea log;
+    BufferedImage img;
+    File file;
+    JLabel picImg;
+
+    final String[] mazesStr = {"Maze 4", "Maze 5", "Maze 6", "Maze 7", "Maze 8", "Maze 9"};
+    final String[] mazeRefs = {"/images/maze4.png", "/images/maze5.png", "/images/maze6.png",
+            "/images/maze7.png", "/images/maze8.png", "/images/maze9.png"};
+    final String[] mazeOriginals = {"/images/original/maze4.png", "/images/original/maze5.png",
+            "/images/original/maze6.png", "/images/original/maze7.png"};
+    JComboBox<String> mazesCombo;
 
     Long time;
 
@@ -60,6 +80,8 @@ public class StartFrame extends JPanel implements ActionListener {
         newGame = new ImageIcon(getScaledImage(newGame.getImage(), w, h));
         ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
         quit = new ImageIcon(getScaledImage(quit.getImage(), w, h));
+        ImageIcon edit = new ImageIcon(System.getProperty("user.dir") + "/images/edit.png");
+        edit = new ImageIcon(getScaledImage(edit.getImage(), w, h));
 
         JPanel panel = new JPanel();
 
@@ -87,22 +109,30 @@ public class StartFrame extends JPanel implements ActionListener {
         b3.setActionCommand("quit");
         b3.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        b4 = new JButton("Change Mazes", edit);
+        b4.setFont(font);
+        b4.setActionCommand("edit");
+        b4.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         //Listen for actions on buttons 1 - 3.
         b1.addActionListener(this);
         b2.addActionListener(this);
         b3.addActionListener(this);
+        b4.addActionListener(this);
 
         b1.setToolTipText("Load the previously saved game");
         b2.setToolTipText("Start a new game");
         b3.setToolTipText("Quit the program");
+        b4.setToolTipText("Change the mazes to play different mazes");
 
         //Add Components to this container, using the default BoxLayout.
         panel.add(b1);
         panel.add(b2);
+        panel.add(b4);
         panel.add(b3);
 
-        panel.setPreferredSize(new Dimension(200, 130));
-        panel.setMaximumSize(new Dimension(200, 130));
+        panel.setPreferredSize(new Dimension(200, 170));
+        panel.setMaximumSize(new Dimension(200, 170));
         panel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
 
         pane.add(panel);
@@ -121,22 +151,110 @@ public class StartFrame extends JPanel implements ActionListener {
         return result;
     }
 
+    //Requires: input is an image or ImageIcon, width and height
+    //EFFECTS: returns a scaled down images to given width and height
+    private static Image getScaledImage(Image src) {
+        double maxWidth = 200.0;
+        double width = ((BufferedImage) src).getWidth();
+        double height = ((BufferedImage) src).getHeight();
+        int divisor = (int) Math.ceil(width / maxWidth);
+        int w = (int) width / divisor;
+        int h = (int) height / divisor;
+        BufferedImage result = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = result.createGraphics();
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(src, 0, 0, w, h, null);
+        g2.dispose();
+
+        return result;
+    }
+
     //EFFECTS: deals with button clicks, quit if quit, else load new or old state then pass information forward to
     // PickingFrame.
+    @SuppressWarnings("methodlength")
     public void actionPerformed(ActionEvent e) {
+        boolean move = false;
         if (e.getActionCommand().equals("load")) {
             loadState();
+            move = true;
         } else if (e.getActionCommand().equals("newGame")) {
             defaultInitialize();
+            move = true;
+        } else if (e.getActionCommand().equals("edit")) {
+            frame.setEnabled(false);
+            frame.setVisible(false);
+            new StartFrame(3);
         } else if (e.getActionCommand().equals("quit")) {
             System.exit(0);
+        } else if (e.getActionCommand().equals("open")) {
+            int returnVal = fc.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                file = fc.getSelectedFile();
+                log.append("Opening: " + file.getName() + ".\n");
+                EventLog.getInstance().logEvent(new Event("Opening: " + file.getName() + "."));
+                saveButton.setEnabled(true);
+                try {
+                    img = ImageIO.read(file);
+                    img = (BufferedImage) getScaledImage(img);
+                    System.out.println("made it an img");
+                    picImg.setIcon(new ImageIcon(img));
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            } else {
+                log.append("Open command cancelled by user.\n");
+                EventLog.getInstance().logEvent(new Event("Open command cancelled by user."));
+            }
+            log.setCaretPosition(log.getDocument().getLength());
+        } else if (e.getActionCommand().equals("replace")) {
+            String replace = mazesCombo.getSelectedItem().toString();
+            int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
+            try {
+                ImageIO.write(ImageIO.read(file), "png", new File(System.getProperty("user.dir")
+                        + mazeRefs[index]));
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+            img = new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB);
+            picImg.setIcon(new ImageIcon(img));
+            saveButton.setEnabled(false);
+            log.append(replace + " replaced with user image.\n");
+            log.setCaretPosition(log.getDocument().getLength());
+            EventLog.getInstance().logEvent(new Event(replace + " replaced with user image."));
+        } else if (e.getActionCommand().equals("empty")) {
+            String replace = mazesCombo.getSelectedItem().toString();
+            int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
+            try {
+                ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + "/images/blank.png")),
+                        "png", new File(System.getProperty("user.dir") + mazeRefs[index]));
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+            log.append(replace + " set to Blank Maze.\n");
+            log.setCaretPosition(log.getDocument().getLength());
+            EventLog.getInstance().logEvent(new Event(replace + " set to Blank Maze."));
+        } else if (e.getActionCommand().equals("original")) {
+            String replace = mazesCombo.getSelectedItem().toString();
+            int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
+            try {
+                ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + mazeOriginals[index])),
+                        "png", new File(System.getProperty("user.dir") + mazeRefs[index]));
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+            log.append(replace + " set to Original " + replace + ".\n");
+            log.setCaretPosition(log.getDocument().getLength());
+            EventLog.getInstance().logEvent(new Event(replace + " set to Original " + replace + "."));
         }
-        frame.setEnabled(false);
-        frame.setVisible(false);
-        if (time != null) {
-            new PickingFrame(mazes, arrangement, time);
-        } else {
-            new PickingFrame(mazes, arrangement);
+        if (move) {
+            frame.setEnabled(false);
+            frame.setVisible(false);
+            if (time != null) {
+                new PickingFrame(mazes, arrangement, time);
+            } else {
+                new PickingFrame(mazes, arrangement);
+            }
         }
     }
 
@@ -148,7 +266,7 @@ public class StartFrame extends JPanel implements ActionListener {
     //EFFECTS: calls method to arrange the JFrame
     private void createAndShowGUI() {
         //Create and set up the window.
-        frame = new JFrame("ButtonHtmlDemo");
+        frame = new JFrame("Main Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add content to the window.
@@ -179,9 +297,9 @@ public class StartFrame extends JPanel implements ActionListener {
     //EFFECTS: starts a mazes instance and stores it in a list, a new game
     private static void defaultInitialize() {
         int temp;
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 9; i++) {
             do {
-                temp = rand.nextInt(7);
+                temp = rand.nextInt(9);
             } while (arrangement.contains(temp));
             arrangement.add(temp);
         }
@@ -197,8 +315,149 @@ public class StartFrame extends JPanel implements ActionListener {
         }
     }
 
+    @SuppressWarnings("methodlength")
     public StartFrame(int temp) {
-        JFileChooser abc;
+
+        frame = new JFrame("Changing Mazes");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Container container = frame.getContentPane();
+        GridLayout layout = new GridLayout(0,3);
+        container.setLayout(layout);
+
+        JPanel panel1 = new JPanel();
+        JPanel panel2 = new JPanel();
+        JPanel panel3 = new JPanel();
+
+        int w = 20;
+        int h = 20;
+        int ph = 160;
+        Dimension buDimension = new Dimension(180, 30);
+
+        ImageIcon newGame = new ImageIcon(System.getProperty("user.dir") + "/images/new.png");
+        newGame = new ImageIcon(getScaledImage(newGame.getImage(), w, h));
+        ImageIcon open = new ImageIcon(System.getProperty("user.dir") + "/images/open.png");
+        open = new ImageIcon(getScaledImage(open.getImage(), w, h));
+        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
+        quit = new ImageIcon(getScaledImage(quit.getImage(), w, h));
+
+        b1 = new JButton("Continue to Game", newGame);
+        Font font = b1.getFont().deriveFont(Font.PLAIN);
+        b1.setFont(font);
+        b1.setPreferredSize(buDimension);
+        b1.setActionCommand("newGame");
+        b1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        b1.setToolTipText("Start Game with mazes with changes made.");
+
+        b3 = new JButton("Quit", quit);
+        b3.setFont(font);
+        b3.setPreferredSize(buDimension);
+        b3.setActionCommand("quit");
+        b3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        b3.setToolTipText("Quit the program");
+
+
+        log = new JTextArea(5, 20);
+        log.setMargin(new Insets(5,5,5,5));
+        log.setEditable(false);
+        log.setLineWrap(true);
+        JScrollPane logScrollPane = new JScrollPane(log);
+
+        fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.addChoosableFileFilter(new ImageFilter());
+        fc.setAcceptAllFileFilterUsed(false);
+
+        img = new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB);
+
+        picImg = new JLabel(new ImageIcon(img));
+
+        openButton = new JButton("Select Maze Image", open);
+        openButton.setFont(font);
+        openButton.setPreferredSize(buDimension);
+        openButton.setActionCommand("open");
+        openButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        openButton.setToolTipText("<html><pre>Select Image file to replace a maze with.\nFor it to be recognized"
+                + " properly, the walls and paths in the image must be in a perfect grid pattern.\nFor"
+                + " predefined start and end points, they should be indicated by cyan (RGB: 000 255 255)"
+                + " (HEX: 00FFFF).\nOtherwise if the maze is surrounded by black walls with two spaced for the start"
+                + " and end they will be picked.\nIn all other cases the program will try to do its best to recognize"
+                + " the maze image and give it two possible start and end points."
+                + "\nCaution above line has not been implemented yet, this msg will be removed later.</pre></html>");
+        //!!! add line for website for mazes.
+
+        javax.swing.ToolTipManager.sharedInstance().setDismissDelay(10000);
+
+        saveButton = new JButton("Replace Selected Maze");
+        saveButton.setFont(font);
+        saveButton.setPreferredSize(buDimension);
+        saveButton.setActionCommand("replace");
+        saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        saveButton.setEnabled(false);
+        saveButton.setToolTipText("Replaces the original maze in the selection above with the input maze image.");
+
+        b2 = new JButton("Set Blank");
+        b2.setFont(font);
+        b2.setPreferredSize(buDimension);
+        b2.setActionCommand("empty");
+        b2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        b2.setToolTipText("Replaces the maze in the selection with a quick to solve maze.");
+
+        b4 = new JButton("Set Original");
+        b4.setFont(font);
+        b4.setPreferredSize(buDimension);
+        b4.setActionCommand("original");
+        b4.setAlignmentX(Component.CENTER_ALIGNMENT);
+        b4.setToolTipText("Replaces the maze in the selection with it's original version as coded by the programmer.");
+
+        JLabel text = new JLabel("<html><pre>Maze to edit: \t </pre></html>");
+
+        b1.addActionListener(this);
+        b3.addActionListener(this);
+        openButton.addActionListener(this);
+        saveButton.addActionListener(this);
+        b2.addActionListener(this);
+        b4.addActionListener(this);
+
+        mazesCombo = new JComboBox<>(mazesStr);
+        mazesCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mazesCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String temp = mazesCombo.getSelectedItem().toString();
+                if (temp.equals("Maze 8") || temp.equals("Maze 9")) {
+                    b4.setEnabled(false);
+                } else {
+                    b4.setEnabled(true);
+                }
+            }
+        });
+
+        panel1.add(openButton);
+        panel1.add(picImg);
+        panel1.setPreferredSize(new Dimension(170, ph));
+
+        panel2.add(text);
+        panel2.add(mazesCombo);
+        panel2.add(saveButton);
+        panel2.add(b2);
+        panel2.add(b4);
+        panel2.setPreferredSize(new Dimension(170, ph));
+
+        panel3.setLayout(new BoxLayout(panel3, BoxLayout.Y_AXIS));
+        panel3.add(logScrollPane);
+        panel3.add(b1);
+        panel3.add(Box.createVerticalStrut(10));
+        panel3.add(b3);
+        panel3.setPreferredSize(new Dimension(250, ph));
+
+
+        container.add(panel1,0);
+        container.add(panel2,1);
+        container.add(panel3,2);
+
+
+        frame.pack();
+        frame.setVisible(true);
     }
 
 }

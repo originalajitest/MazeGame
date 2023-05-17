@@ -48,7 +48,8 @@ public class PickingFrame extends JPanel implements ActionListener {
     private final long previousTime;
     private long elapsed;
 
-    private final String[] inputs = {"Maze 1", "Maze 2", "Maze 3", "Maze 4", "Maze 5", "Maze 6", "Maze 7"};
+    private final String[] inputs = {"Maze 1", "Maze 2", "Maze 3", "Maze 4", "Maze 5", "Maze 6", "Maze 7", "Maze 8",
+            "Maze 9"};
     private final String[] colors = {"black", "blue", "cyan", "gray", "pink", "yellow", "magenta"};
     private final String[] visPick = {"@A", "1", "2", "3", "4", "5", "8", "10"};
 
@@ -230,6 +231,16 @@ public class PickingFrame extends JPanel implements ActionListener {
                         scale = 12;
                     }
                     break;
+                case "Maze 8":
+                    if (!mazes.checkSolved(arrange.indexOf(7))) {
+                        goToMazes(7);;
+                    }
+                    break;
+                case "Maze 9":
+                    if (!mazes.checkSolved(arrange.indexOf(8))) {
+                        goToMazes(8);
+                    }
+                    break;
             }
         } else if ("quit".equals(e.getActionCommand())) {
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
@@ -359,6 +370,8 @@ public class PickingFrame extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 visibility = (String) visCombo.getSelectedItem();
+                EventLog.getInstance().logEvent(new Event("On Maze " + inp + " visibility changed to "
+                        + visibility));
                 gra.repaint();
                 visCombo.transferFocus();
             }
