@@ -233,7 +233,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                     break;
                 case "Maze 8":
                     if (!mazes.checkSolved(arrange.indexOf(7))) {
-                        goToMazes(7);;
+                        goToMazes(7);
                     }
                     break;
                 case "Maze 9":

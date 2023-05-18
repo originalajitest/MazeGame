@@ -6,18 +6,19 @@ Current functionality:
 <ul>
 <li>Can load a new game or an old save</li>
 <li>Can go into any maze, but does not go into one that has been completed before.</li>
-<li>There is an ongoing timer that calculates how long to complete the mazes, it does not account for previous solves.</li>
-<li>You can change the color and this color change persists throughout the mazes.</li>
-<li>You can change the visibility so that you are limited to a set number of blocks around you, for below 3, it assumes the visibility for the see-able path print, but greater than 3 then the program only allows 3 blocks around the path</li>
-<li>You can save the game state at any one point.</li>
+<li>There is an ongoing timer that calculates how long to complete the mazes.</li>
+<li>You can change the color and this color change persists through mazes until changed.</li>
+<li>You can change the visibility limiting the number of blocks see-able around you (below 3, it assumes the visibility for path, otherwise then the program only allows 3 blocks around the path)</li>
+<li>You can save the game state at any point.</li>
 <li>A cheat code has been implemented to solve a maze quickly and beat the game.</li>
-<li>You can easily change the mazes with new pictures which meat a set of requirements, they myst be one a grid layout and each block must have the same width and height as the rest. It must also have two cyan blocks to indicate the start and end points. The you just change the link in AssignMaze and also indicate how many rows and columns it has then the program should do the rest.</li>
+<li>You can change the mazes with new pictures. Given that a blocks have the same width and height as each other (and width == height), the program will be able to recognize the maze. It can have two cyan blocks to indicate the start and the end.</li>
+<li>Any changes made during the programs runtime are sotred in a log and this log outputs on exiting the program. This log does not persist through saving and loading data.</li>
 </ul>
 
 <br>
 References:
 <ul>
-<li> website for maze6 (https://keesiemeijer.github.io/maze-generator/#generate) with inputs: (thickness-10; Columns-25; Rows-20; Entries-none)</li>
+<li> website for Maze 6 and Maze 7 (https://keesiemeijer.github.io/maze-generator/#generate) with inputs for Maze 6: (thickness-10; Columns-25; Rows-20; Entries-none)</li>
 </ul>
 
 ## Answering questions
@@ -39,12 +40,8 @@ Primary goals:
 - The screen will also have medals shown, greyed out if not yet obtained and colorful if obtained.
 - They will be shown on the main screen numbered 1 to 6 with the number corresponding to the difficulty (1 being the
 easiest).
-- After completing each maze, the user will collect a medal at the end (easily see able), it will be a collectible and
-will add to their data.
-- The medals will be numbered randomly so that this can be linked to *Extra stretch goals*.
 - Then they will come back to the start by a teleport circle.
-- Once all maps are complete, the game will check based on the number of medals, another
-gate will appear to lead to the end credits/room.
+- Once all maps are complete, the game will push the user to the end credits.
 
 Stretch Goals:
 - To cover the map in black with only the start and the end being see-able as the user progresses, they will be able to
@@ -52,12 +49,6 @@ Stretch Goals:
 - This data about how much of the map can be seen should be sent to the data file so that it can be called upon resuming. 
 - I will have to add a function on the start screen (this will not be there unless this code has been implemented),
 where the user will be able to switch this difficulty off.
-
-Extra Stretch Goals:
-- I will make 3 different mini puzzles like those adds you see on YouTube about flowing water etc. to get to some
-treasure. These will be assigned to specific numbers so that they are random and can be seen is any maze based on luck.
-- This will mean that the medal is given after the puzzle is complete.
-- A different extra stretch goal is also making variations of mazes for each level to keep it fresh.
 
 ## User Stories:
 
@@ -232,8 +223,8 @@ The design I made for the UML Class diagram is right, but it does not reflect th
 Especially how the functions relate with each other and which they call in effect. 
 
 Now, in regards to improving my design, I would first try to get full code coverage for my tests (I think that it is currently a server side error and as such I am not able to get the ful 99.5 {the last 0.5 is not worth it}).
-Another improvement would be to move the visibility stuff to the model so you would save it and then call it and it would also be testable.
-Another big thing would be to decrease the various method line as I have one that is 106 line and try to keep them low by factoring out duplicate buttons (there are two but they are in entirely different functions), this would move all buttons outside and will increase overall code length byt also increase readability.
+Another improvement would be to move the visibility stuff to the model, so you would save it and then call it, and it would also be testable.
+Another big thing would be to decrease the various method line as I have one that is 106 line and try to keep them low by factoring out duplicate buttons (there are two, but they are in entirely different functions), this would move all buttons outside and will increase overall code length byt also increase readability.
 
 I should also remove all debugging functions I used to ensure reliability and security of the program. I should also make all functions private and only accessible as the EventLog functions to improve security.
 It would also be helpful to break down the Picking frame class into two separate classes to increase readability.

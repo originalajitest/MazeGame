@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 //Deals with initializing mazes, will deal with converting from an image to a 2D array.
 public class AssignMaze {
@@ -34,7 +34,7 @@ public class AssignMaze {
     private final String maze8ref = "/images/maze8.png";
     private final String maze9ref = "/images/maze9.png";
 
-
+    static Random rand = new Random();
 
     private static final String[][] emptyMaze = new String[][]{
             {null,null}};
@@ -278,9 +278,125 @@ public class AssignMaze {
         return inpMaze;
     }
 
-    private String[][] newFix(String[][] inpMaze) {
+    int endX;
+    int endY;
+    String[][] maze;
 
-        return emptyMaze;
+    @SuppressWarnings("methodlength")
+    private String[][] newFix(String[][] inpMaze) {
+        boolean leave = false;
+        int startX = 0;
+        int startY = 0;
+        maze = inpMaze;
+        for (int i = 0; i < inpMaze.length; i++) {
+            for (int j = 0; j < inpMaze[0].length; j++) {
+                if (inpMaze[i][j].equals("T")) {
+                    startX = j;
+                    startY = i;
+                    leave = true;
+                    break;//Defines Start point to be at first open path
+                }
+            }
+            if (leave) {
+                break;
+            }
+        }
+        int skipMax = (inpMaze.length + inpMaze[0].length) / 2;
+        int skip = rand.nextInt(skipMax);
+        int totalSkipped = 0;
+        leave = false;
+        for (int i = inpMaze.length - 1; i >= 0; i--) {
+            for (int j = inpMaze[0].length - 1; j >= 0; j--) {
+                if (inpMaze[i][j].equals("T")) {
+                    if (totalSkipped != skip) {
+                        totalSkipped++;
+                    } else {
+                        endX = j;
+                        endY = i;
+                        ArrayDeque curPath = new ArrayDeque();
+                        if (recurse(startX, startY, new HashSet<>(), curPath)) {
+                            leave = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (leave) {
+                break;
+            }
+        }
+        inpMaze[startY][startX] = null;
+        inpMaze[endY][endX] = null;
+        return inpMaze;
+    }
+
+    @SuppressWarnings("methodlength")
+    private boolean recurse(int startX, int startY, HashSet<Point> beenTo, ArrayDeque<Point> curPath) {
+        Point left = new Point(startX - 1, startY);
+        Point right = new Point(startX + 1, startY);
+        Point up = new Point(startX, startY - 1);
+        Point down = new Point(startX, startY + 1);
+
+        if (startX == endX && startY == endY) {
+            curPath.addLast(new Point(startX, startY));
+            return true;
+            //This code will never run due to how the mazes are structured
+        } else if (startX < 0 || startX >= maze[0].length || startY < 0 || startY >= maze.length
+                || maze[startY][startX].equals("F")) {
+            return false;
+            //This code should also never run as mazes have start's and end's initialized from nulls' and are set
+            // to "T" once found, they are always within boundaries of the 2D Maze array
+        }
+        curPath.addLast(new Point(startX, startY));
+        boolean found = false;
+        if (!beenTo.contains(left)) {
+            beenTo.add(left);
+            found = recurse(left.xx, left.yy, beenTo, curPath);
+        }
+        if (!found && !beenTo.contains(right)) {
+            beenTo.add(right);
+            found = recurse(right.xx, right.yy, beenTo, curPath);
+        }
+        if (!found && !beenTo.contains(up)) {
+            beenTo.add(up);
+            found = recurse(up.xx, up.yy, beenTo, curPath);
+        }
+        if (!found && !beenTo.contains(down)) {
+            beenTo.add(down);
+            found = recurse(down.xx, down.yy, beenTo, curPath);
+        }
+        if (found) {
+            return true;
+        }
+        curPath.removeLast();
+        return false;
+    }
+
+    private class Point {
+        int xx;
+        int yy;
+
+        public Point(int xx, int yy) {
+            this.xx = xx;
+            this.yy = yy;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Point point = (Point) o;
+            return xx == point.xx && yy == point.yy;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(xx, yy);
+        }
     }
 
 }

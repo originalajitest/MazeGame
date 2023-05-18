@@ -208,7 +208,7 @@ public class StartFrame extends JPanel implements ActionListener {
             }
             log.setCaretPosition(log.getDocument().getLength());
         } else if (e.getActionCommand().equals("replace")) {
-            String replace = mazesCombo.getSelectedItem().toString();
+            String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
                 ImageIO.write(ImageIO.read(file), "png", new File(System.getProperty("user.dir")
@@ -223,7 +223,7 @@ public class StartFrame extends JPanel implements ActionListener {
             log.setCaretPosition(log.getDocument().getLength());
             EventLog.getInstance().logEvent(new Event(replace + " replaced with user image."));
         } else if (e.getActionCommand().equals("empty")) {
-            String replace = mazesCombo.getSelectedItem().toString();
+            String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
                 ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + "/images/blank.png")),
@@ -235,7 +235,7 @@ public class StartFrame extends JPanel implements ActionListener {
             log.setCaretPosition(log.getDocument().getLength());
             EventLog.getInstance().logEvent(new Event(replace + " set to Blank Maze."));
         } else if (e.getActionCommand().equals("original")) {
-            String replace = mazesCombo.getSelectedItem().toString();
+            String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
                 ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + mazeOriginals[index])),
@@ -376,16 +376,20 @@ public class StartFrame extends JPanel implements ActionListener {
         openButton.setPreferredSize(buDimension);
         openButton.setActionCommand("open");
         openButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        openButton.setToolTipText("<html><pre>Select Image file to replace a maze with.\nFor it to be recognized"
-                + " properly, the walls and paths in the image must be in a perfect grid pattern.\nFor"
-                + " predefined start and end points, they should be indicated by cyan (RGB: 000 255 255)"
-                + " (HEX: 00FFFF).\nOtherwise if the maze is surrounded by black walls with two spaced for the start"
-                + " and end they will be picked.\nIn all other cases the program will try to do its best to recognize"
-                + " the maze image and give it two possible start and end points."
-                + "\nCaution above line has not been implemented yet, this msg will be removed later.</pre></html>");
-        //!!! add line for website for mazes.
+        openButton.setToolTipText("<html><pre>Select Image file to replace a maze with.\n"
+                + "For it to be recognized properly, the walls and paths in the image must be in a perfect grid"
+                + " pattern.\n"
+                + "Recommended website: https://keesiemeijer.github.io/maze-generator/#generate\n"
+                + "For predefined start & end points, the points should be indicated by cyan (RGB: 000 255 255)"
+                + " (HEX: 00FFFF).\n"
+                + "Otherwise if the maze is surrounded by black walls with two spaced for the start & end, they"
+                + " will be picked.\n"
+                + "Otherwise, the program will assign the start point to the first true path from top left and a"
+                + " possible random end point.\n"
+                + "In the event the maze is not from the above link, there is no guarantee that it will be recognized"
+                + " properly.</pre></html>");
 
-        javax.swing.ToolTipManager.sharedInstance().setDismissDelay(10000);
+        javax.swing.ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
         saveButton = new JButton("Replace Selected Maze");
         saveButton.setFont(font);
@@ -423,8 +427,8 @@ public class StartFrame extends JPanel implements ActionListener {
         mazesCombo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String temp = mazesCombo.getSelectedItem().toString();
-                if (temp.equals("Maze 8") || temp.equals("Maze 9")) {
+                String temp = (String) mazesCombo.getSelectedItem();
+                if ("Maze 8".equals(temp) || "Maze 9".equals(temp)) {
                     b4.setEnabled(false);
                 } else {
                     b4.setEnabled(true);
