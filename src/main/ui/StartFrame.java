@@ -74,13 +74,13 @@ public class StartFrame extends JPanel implements ActionListener {
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
-        ImageIcon load = new ImageIcon(System.getProperty("user.dir") + "/images/load.png");
+        ImageIcon load = new ImageIcon(System.getProperty("user.dir") + "/images/assets/load.png");
         load = new ImageIcon(getScaledImage(load.getImage(), w, h));
-        ImageIcon newGame = new ImageIcon(System.getProperty("user.dir") + "/images/new.png");
+        ImageIcon newGame = new ImageIcon(System.getProperty("user.dir") + "/images/assets/new.png");
         newGame = new ImageIcon(getScaledImage(newGame.getImage(), w, h));
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
+        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
         quit = new ImageIcon(getScaledImage(quit.getImage(), w, h));
-        ImageIcon edit = new ImageIcon(System.getProperty("user.dir") + "/images/edit.png");
+        ImageIcon edit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/edit.png");
         edit = new ImageIcon(getScaledImage(edit.getImage(), w, h));
 
         JPanel panel = new JPanel();
@@ -226,7 +226,7 @@ public class StartFrame extends JPanel implements ActionListener {
             String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
-                ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + "/images/blank.png")),
+                ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + "/images/assets/blank.png")),
                         "png", new File(System.getProperty("user.dir") + mazeRefs[index]));
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
@@ -333,11 +333,11 @@ public class StartFrame extends JPanel implements ActionListener {
         int ph = 160;
         Dimension buDimension = new Dimension(180, 30);
 
-        ImageIcon newGame = new ImageIcon(System.getProperty("user.dir") + "/images/new.png");
+        ImageIcon newGame = new ImageIcon(System.getProperty("user.dir") + "/images/assets/new.png");
         newGame = new ImageIcon(getScaledImage(newGame.getImage(), w, h));
-        ImageIcon open = new ImageIcon(System.getProperty("user.dir") + "/images/open.png");
+        ImageIcon open = new ImageIcon(System.getProperty("user.dir") + "/images/assets/open.png");
         open = new ImageIcon(getScaledImage(open.getImage(), w, h));
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
+        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
         quit = new ImageIcon(getScaledImage(quit.getImage(), w, h));
 
         b1 = new JButton("Continue to Game", newGame);

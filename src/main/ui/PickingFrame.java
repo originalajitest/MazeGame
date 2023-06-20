@@ -12,6 +12,7 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -39,8 +40,23 @@ public class PickingFrame extends JPanel implements ActionListener {
     private JComboBox<String> colorCombo;
     private JComboBox<String> visCombo;
 
+    protected double height;
+    protected double width;
     protected int scale = 20;
     protected boolean showPath = false;
+    protected boolean wall = false;
+    protected boolean zoomStatus = false;
+    protected boolean zoomPossible = false;
+    protected int scale2 = 0;
+    protected int maxVertVis;
+    protected int maxHorVis;
+
+    protected Image imgWall;
+    protected Image imgWall1;
+    protected Image imgWall2;
+    protected Image imgWall3;
+    ImageObserver imgObserve;
+    protected int wallIndex;
 
     private Timer timer;
     private JLabel label;
@@ -50,7 +66,7 @@ public class PickingFrame extends JPanel implements ActionListener {
 
     private final String[] inputs = {"Maze 1", "Maze 2", "Maze 3", "Maze 4", "Maze 5", "Maze 6", "Maze 7", "Maze 8",
             "Maze 9"};
-    private final String[] colors = {"black", "blue", "cyan", "gray", "pink", "yellow", "magenta"};
+    private final ArrayList<String> colors = new ArrayList<>();
     private final String[] visPick = {"@A", "1", "2", "3", "4", "5", "8", "10"};
 
     ArrayList<Map<String, Integer>> moves;
@@ -97,6 +113,23 @@ public class PickingFrame extends JPanel implements ActionListener {
         //Create and set up the window.
         frame = new JFrame("Maze Game");
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        //Getting height of title bar, this took soo long :'(
+        JFrame tempFrame = new JFrame("lol");
+        tempFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        JPanel tempPanel = new JPanel();
+        tempPanel.setPreferredSize(new Dimension(300, 200));
+        tempFrame.setContentPane(tempPanel);
+        tempFrame.pack();
+        int titleBar = tempFrame.getHeight() - tempPanel.getHeight();
+        tempFrame.dispose();
+
+        //Gets the size of workable space.
+        GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        Rectangle bounds = environment.getMaximumWindowBounds();
+        height = bounds.height - titleBar;
+        width = bounds.width - 2;
+
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -105,6 +138,26 @@ public class PickingFrame extends JPanel implements ActionListener {
                 System.exit(0);
             }
         });
+
+        colors.add("black");
+        colors.add("blue");
+        colors.add("cyan");
+        colors.add("gray");
+        colors.add("pink");
+        colors.add("yellow");
+        colors.add("magenta");
+
+        imgWall = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall.png")).getImage();
+        imgWall1 = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall1.png")).getImage();
+        imgWall2 = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall2.png")).getImage();
+        imgWall3 = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall3.png")).getImage();
+
+        imgObserve = new ImageObserver() {
+            @Override
+            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+                return false;
+            }
+        };
 
         //Add content to the window.
         running(frame.getContentPane());
@@ -163,7 +216,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         panel.setPreferredSize(new Dimension(100, 130));
         panel.setMaximumSize(new Dimension(100, 130));
 
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
+        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
         quit = new ImageIcon(getScaledImage(quit.getImage(), 20, 20));
 
         inputsCombo = new JComboBox<>(inputs);
@@ -228,7 +281,6 @@ public class PickingFrame extends JPanel implements ActionListener {
                 case "Maze 7":
                     if (!mazes.checkSolved(arrange.indexOf(6))) {
                         goToMazes(6);
-                        scale = 12;
                     }
                     break;
                 case "Maze 8":
@@ -301,6 +353,24 @@ public class PickingFrame extends JPanel implements ActionListener {
         initializeRequired(index);
         visibility = "@A";
 
+        double hScale = (height-90) / (double) maze.length;
+        double wScale = width / (double) maze[0].length;
+        if (((hScale) < 20) || ((wScale) < 20)) {
+            scale = (int) Math.floor(hScale);
+            if (scale > wScale) {
+                scale = (int) Math.floor(wScale);
+            }
+            scale2 = scale;
+            zoomPossible = true;
+            maxVertVis = (int) ((height - 90) / 20);
+            maxHorVis = (int) (width / 20);
+        } else {
+            colors.add("wall0");
+            colors.add("wall1");
+            colors.add("wall2");
+            colors.add("wall3");
+        }
+
         container.removeAll();
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
@@ -319,6 +389,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                 long deltaTime = now - lastTime;
                 colorTimer -= deltaTime / 1000f;
                 if (colorTimer <= 0) {
+                    gra.paintUpdate();
                     gra.repaint();
                     colorTimer = 0.1f;
                 }
@@ -326,22 +397,19 @@ public class PickingFrame extends JPanel implements ActionListener {
             }
         });
 
-        int width = 400;
-        int height = 400;
-        if (maze[0].length > 12) {
-            width = 20 + (maze[0].length * scale) + 100;
-        }
-        if (maze.length > 8) {
-            height = 130 + 30 + (maze.length * scale) + 50;
-        }
-        if (width > 400) {
+        int width = 20 + (maze[0].length * scale) + 100;
+        int height = 130 + 30 + (maze.length * scale) + 50;
+        if (scale != 20) {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        } else if ((width > 400) || (height > 400)) {
             frame.setMinimumSize(new Dimension(width, height));
         } else {
             frame.setMinimumSize(new Dimension(400, 400));
         }
 
-        colorCombo = new JComboBox<>(colors);
-        colorCombo.setSelectedIndex(java.util.Arrays.asList(colors).indexOf(mazes.getColor()));
+        colorCombo = new JComboBox<>();
+        colorCombo.setModel(new DefaultComboBoxModel<>(colors.toArray(new String[0])));
+        colorCombo.setSelectedIndex(colors.indexOf(mazes.getColor()));
         colorCombo.setMaximumSize(new Dimension(80, 30));
         colorCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -354,15 +422,21 @@ public class PickingFrame extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String temp = (String) colorCombo.getSelectedItem();
-                try {
-                    Field field = Class.forName("java.awt.Color").getField(temp);
-                    mazes.setColor(temp);
-                    color = (Color) field.get(null);
-                    gra.repaint();
-                    colorCombo.transferFocusBackward();
-                } catch (Exception ex) {
-                    color = null;
+                if (temp.contains("wall")) {
+                    wall = true;
+                    wallIndex = temp.charAt(4) - '0';
+                } else {
+                    wall = false;
+                    try {
+                        Field field = Class.forName("java.awt.Color").getField(temp);
+                        mazes.setColor(temp);
+                        color = (Color) field.get(null);
+                    } catch (Exception ex) {
+                        color = null;
+                    }
                 }
+                gra.repaint();
+                colorCombo.transferFocusBackward();
             }
         });
 
@@ -383,7 +457,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         b1.setActionCommand("save");
         b1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/quit.png");
+        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
         quit = new ImageIcon(getScaledImage(quit.getImage(), 19, 19));
         JButton b2 = new JButton("Quit", quit);
         b2.setActionCommand("quit");
@@ -435,6 +509,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         boolean moved = false;
         cheat(code);
         cheat2(code);
+        zoom(code);
         if (!notSolved) {
             frame.setEnabled(false);
             frame.setVisible(false);
@@ -462,6 +537,7 @@ public class PickingFrame extends JPanel implements ActionListener {
             temp.put("posX", player.getX());
             temp.put("posY", player.getY());
             moves.add(temp);
+            gra.repaint();
         }
         if (notSolved) {
             boolean temp = mazes.solved(index);
@@ -471,6 +547,31 @@ public class PickingFrame extends JPanel implements ActionListener {
                 timer.stop();
                 notSolved = false;
                 frame.repaint();
+            }
+        }
+    }
+
+    private void zoom (int code) {
+        if (zoomPossible) {
+            if (code == KeyEvent.VK_Z) {
+                if (!zoomStatus) {
+                    zoomStatus = true;
+                    scale = 20;
+                    colors.add("wall0");
+                    colors.add("wall1");
+                    colors.add("wall2");
+                    colors.add("wall3");
+                    colorCombo.setModel(new DefaultComboBoxModel<>(colors.toArray(new String[0])));
+                } else {
+                    zoomStatus = false;
+                    scale = scale2;
+                    colors.remove("wall0");
+                    colors.remove("wall1");
+                    colors.remove("wall2");
+                    colors.remove("wall3");
+                    colorCombo.setModel(new DefaultComboBoxModel<>(colors.toArray(new String[0])));
+                    colorCombo.setSelectedItem("black");
+                }
             }
         }
     }
@@ -569,6 +670,7 @@ public class PickingFrame extends JPanel implements ActionListener {
     }
 
     private int acc = 0;
+    private long lastTime2 = 0L;
 
     //EFFECTS: creates a graphics image of the maze at all the right places.
     private class Gra extends JComponent {
@@ -579,6 +681,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         int fixedDist = 3;
         ArrayDeque<Point> dq;
         HashSet<Point> beenTo;
+        int plChange = 0;
 
         Gra(String[][] inp) {
             maze = inp;
@@ -589,28 +692,70 @@ public class PickingFrame extends JPanel implements ActionListener {
             dq.removeFirst();
         }
 
+        public void paintUpdate() {
+            acc++;
+            if (acc % 2 == 0) {
+                plChange++;
+            }
+        }
+
+        private boolean contained = false;
+
         //Calls paintComponent and also sets the maze graphics
         @SuppressWarnings("methodlength")
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
+            plX = player.getX();
+            plY = player.getY();
+
+            Point plPoint = new Point(plX, plY);
+
+            if (dq.contains(plPoint)) {
+                dq.remove(plPoint);
+                contained = true;
+            }
+            if (zoomStatus) {
+                printZoomMaze(g);
+            } else {
+                printMaze(g);
+            }
+
+            if (contained) {
+                dq.add(plPoint);
+                contained = false;
+            }
+            long now = System.currentTimeMillis();
+            elapsed = (now - startTime) + previousTime;
+            long deltaTime = now - lastTime2;
+            if (deltaTime != 0) {
+                long frameRate = 1000 / deltaTime;
+                System.out.println(frameRate);
+                lastTime2 = now;
+            }
+        }
+
+        private void paintWall(Graphics g, int curX, int curY) {
+            if (wallIndex == 0) {
+                g.drawImage(imgWall, curX, curY, imgObserve);
+            } else if (wallIndex == 1) {
+                g.drawImage(imgWall1, curX, curY, imgObserve);
+            } else if (wallIndex == 2) {
+                g.drawImage(imgWall2, curX, curY, imgObserve);
+            } else {
+                g.drawImage(imgWall3, curX, curY, imgObserve);
+            }
+
+        }
+
+        private void printMaze(Graphics g) {
             int temp = frame.getWidth() - 20;
             temp = (temp - (maze[0].length * scale)) / 2;
 
             int temp2 = frame.getHeight() - 130;
             temp2 = (temp2 - (maze.length * scale)) / 2;
 
-            plX = player.getX();
-            plY = player.getY();
-
-            Point plPoint = new Point(plX, plY);
-            boolean contained = false;
-            if (dq.contains(plPoint)) {
-                dq.remove(plPoint);
-                contained = true;
-            }
-            acc++;
             float s = Math.abs((acc % 50) / 50f - 0.5f);
 
             for (int i = 0; i < maze.length; i++) {
@@ -626,11 +771,115 @@ public class PickingFrame extends JPanel implements ActionListener {
                             g.setColor(new Color(red, green, blue));
                         }
                     }
-                    g.fillRect(curX, curY, scale, scale);
+                    if (j == plX && i == plY) {
+                        renderPlayer(g, curX, curY);
+                    } else {
+                        if (wall) {
+                            if (g.getColor().equals(color)) {
+                                paintWall(g, curX, curY);
+                            } else {
+                                g.fillRect(curX, curY, scale, scale);
+                            }
+                        } else {
+                            g.fillRect(curX, curY, scale, scale);
+                        }
+                    }
                 }
             }
+        }
+
+        private int curXLow = 0;
+        private int curYLow = 0;
+
+        private void printZoomMaze(Graphics g) {
+            int temp;
+            int temp2 = 0;
+            if ((curXLow > plX) || (plX >= (maxHorVis + curXLow))) {
+                if (plX < curXLow) {
+                    curXLow = curXLow - maxHorVis;
+                } else {
+                    curXLow = curXLow + maxHorVis;
+                }
+                if ((maxHorVis + curXLow) > maze[0].length) {
+                    curXLow = maze[0].length - maxHorVis;
+                } else if (curXLow < 0) {
+                    curXLow = 0;
+                }
+            }
+            temp = - (curXLow * scale);
+
+            if ((curYLow > plY) || (plY >= (maxVertVis + curYLow))) {
+                if (plY < curYLow) {
+                    curYLow = curYLow - maxVertVis;
+                } else {
+                    curYLow = curYLow + maxVertVis;
+                }
+                if ((maxVertVis + curYLow) > maze.length) {
+                    curYLow = maze.length - maxVertVis;
+                } else if (curYLow < 0) {
+                    curYLow = 0;
+                }
+            }
+            temp2 = - (curYLow * scale);
+
+            float s = Math.abs((acc % 50) / 50f - 0.5f);
+
+            for (int i = curYLow; i < maze.length; i++) {
+                for (int j = curXLow; j < maze[0].length; j++) {
+                    if (j > (maxHorVis + curXLow)) break;
+                    pickColor(i, j, g);
+                    int curX = temp + j * scale;
+                    int curY = temp2 + i * scale;
+                    if (showPath) {
+                        if (dq.contains(new Point(j, i))) {
+                            float red = Math.abs((1f - s) * curX / (float) getWidth() - 1f);
+                            float green = Math.abs((1f - s) * curY / (float) getHeight() - 1f);
+                            float blue = Math.abs((red + green) / 2 - 1f);
+                            g.setColor(new Color(red, green, blue));
+                        }
+                    }
+                    if (j == plX && i == plY) {
+                        renderPlayer(g, curX, curY);
+                    } else {
+                        if (wall) {
+                            if (g.getColor().equals(color)) {
+                                paintWall(g, curX, curY);
+                            } else {
+                                g.fillRect(curX, curY, scale, scale);
+                            }
+                        } else {
+                            g.fillRect(curX, curY, scale, scale);
+                        }
+                    }
+                }
+                if (i > (maxVertVis + curYLow)) break;
+            }
+        }
+
+        private void renderPlayer(Graphics g, int curX, int curY) {
             if (contained) {
-                dq.add(plPoint);
+                float s = Math.abs((acc % 50) / 50f - 0.5f);
+                float red = Math.abs((1f - s) * curX / (float) getWidth() - 1f);
+                float green = Math.abs((1f - s) * curY / (float) getHeight() - 1f);
+                float blue = Math.abs((red + green) / 2 - 1f);
+                g.setColor(new Color(red, green,blue));
+                g.fillRect(curX, curY, scale, scale);
+            } else {
+                g.setColor(Color.white);
+                g.fillRect(curX, curY, scale, scale);
+            }
+
+            g.setColor(Color.RED);
+            if (plChange % 8 == 0) {
+                g.fillRect(curX, curY, scale, scale);
+            } else if ((plChange % 8 == 1) || (plChange % 8 == 7)) {
+                g.fillRect(curX + 1, curY + 1, scale - 2, scale - 2);
+            } else if ((plChange % 8 == 2) || (plChange % 8 == 6)) {
+                g.fillRect(curX + 2, curY + 2, scale - 4, scale - 4);
+            } else if ((plChange % 8 == 3) || (plChange % 8 == 5)) {
+                g.fillRect(curX + 3, curY + 3, scale - 6, scale - 6);
+            } else {
+                g.fillRect(curX + 4, curY + 4, scale - 8, scale - 8);
             }
         }
 
