@@ -587,33 +587,35 @@ public class PickingFrame extends JPanel implements ActionListener {
     //EFFECTS: cheat code ;)
     @SuppressWarnings("methodlength")
     private void cheat(int code) {
-        if (code == KeyEvent.VK_M && ap) {
-            mazes.quickSolve2(index);
-            frame.repaint();
-        } else if (code == KeyEvent.VK_A && yp) {
-            ap = true;
-            yp = false;
-        } else if (code == KeyEvent.VK_Y && op) {
-            yp = true;
-            op = false;
-        } else if (code == KeyEvent.VK_O && sp) {
-            op = true;
-            sp = false;
-        } else if (code == KeyEvent.VK_S && ep) {
-            sp = true;
-            ep = false;
-        } else if (code == KeyEvent.VK_E && hp) {
-            ep = true;
-            hp = false;
-        } else if (code == KeyEvent.VK_H) {
-            hp = true;
-        } else {
-            hp = false;
-            ep = false;
-            sp = false;
-            op = false;
-            yp = false;
-            ap = false;
+        if (code > 64 && code < 90) {
+            if (code == KeyEvent.VK_M && ap) {
+                mazes.quickSolve2(index);
+                frame.repaint();
+            } else if (code == KeyEvent.VK_A && yp) {
+                ap = true;
+                yp = false;
+            } else if (code == KeyEvent.VK_Y && op) {
+                yp = true;
+                op = false;
+            } else if (code == KeyEvent.VK_O && sp) {
+                op = true;
+                sp = false;
+            } else if (code == KeyEvent.VK_S && ep) {
+                sp = true;
+                ep = false;
+            } else if (code == KeyEvent.VK_E && hp) {
+                ep = true;
+                hp = false;
+            } else if (code == KeyEvent.VK_H) {
+                hp = true;
+            } else {
+                hp = false;
+                ep = false;
+                sp = false;
+                op = false;
+                yp = false;
+                ap = false;
+            }
         }
     }
 
@@ -628,44 +630,46 @@ public class PickingFrame extends JPanel implements ActionListener {
 
     @SuppressWarnings("methodlength")
     private void cheat2(int code) {
-        if (code == KeyEvent.VK_Y && ap2) {
-            showPath = true;
-            ap2 = false;
-        } else if (code == KeyEvent.VK_A && wp2) {
-            ap2 = true;
-            wp2 = false;
-        } else if (code == KeyEvent.VK_W && ap1) {
-            wp2 = true;
-            ap1 = false;
-        } else if (code == KeyEvent.VK_A && dp1) {
-            ap1 = true;
-            dp1 = false;
-        } else if (code == KeyEvent.VK_D && wp1) {
-            dp1 = true;
-            wp1 = false;
-        } else if (code == KeyEvent.VK_W && op1) {
-            wp1 = true;
-            op1 = false;
-        } else if (code == KeyEvent.VK_O && hp1) {
-            op1 = true;
-            hp1 = false;
-        } else if (code == KeyEvent.VK_H && sp1) {
-            hp1 = true;
-            sp1 = false;
-        } else if (code == KeyEvent.VK_S) {
-            sp1 = true;
-        } else {
-            sp1 = false;
-            hp1 = false;
-            op1 = false;
-            wp1 = false;
-            dp1 = false;
-            ap1 = false;
-            wp2 = false;
-            ap2 = false;
-        }
-        if (code == KeyEvent.VK_ESCAPE) {
-            showPath = false;
+        if ((code > 64 && code < 90) || code == 27) {
+            if (code == KeyEvent.VK_Y && ap2) {
+                showPath = true;
+                ap2 = false;
+            } else if (code == KeyEvent.VK_A && wp2) {
+                ap2 = true;
+                wp2 = false;
+            } else if (code == KeyEvent.VK_W && ap1) {
+                wp2 = true;
+                ap1 = false;
+            } else if (code == KeyEvent.VK_A && dp1) {
+                ap1 = true;
+                dp1 = false;
+            } else if (code == KeyEvent.VK_D && wp1) {
+                dp1 = true;
+                wp1 = false;
+            } else if (code == KeyEvent.VK_W && op1) {
+                wp1 = true;
+                op1 = false;
+            } else if (code == KeyEvent.VK_O && hp1) {
+                op1 = true;
+                hp1 = false;
+            } else if (code == KeyEvent.VK_H && sp1) {
+                hp1 = true;
+                sp1 = false;
+            } else if (code == KeyEvent.VK_S) {
+                sp1 = true;
+            } else {
+                sp1 = false;
+                hp1 = false;
+                op1 = false;
+                wp1 = false;
+                dp1 = false;
+                ap1 = false;
+                wp2 = false;
+                ap2 = false;
+            }
+            if (code == KeyEvent.VK_ESCAPE) {
+                showPath = false;
+            }
         }
     }
 
@@ -793,40 +797,50 @@ public class PickingFrame extends JPanel implements ActionListener {
 
         private void printZoomMaze(Graphics g) {
             int temp;
-            int temp2 = 0;
-            if ((curXLow > plX) || (plX >= (maxHorVis + curXLow))) {
-                if (plX < curXLow) {
-                    curXLow = curXLow - maxHorVis;
-                } else {
-                    curXLow = curXLow + maxHorVis;
+            int temp2;
+            if (maze[0].length <= maxHorVis) {
+                temp = frame.getWidth() - 20;
+                temp = (temp - (maze[0].length * scale)) / 2;
+            } else {
+                if ((curXLow > plX) || (plX >= (maxHorVis + curXLow))) {
+                    if (plX < curXLow) {
+                        curXLow = curXLow - maxHorVis;
+                    } else {
+                        curXLow = curXLow + maxHorVis;
+                    }
+                    if ((maxHorVis + curXLow) > (maze[0].length - 1)) {
+                        curXLow = maze[0].length - maxHorVis;
+                    } else if (curXLow < 0) {
+                        curXLow = 0;
+                    }
                 }
-                if ((maxHorVis + curXLow) > maze[0].length) {
-                    curXLow = maze[0].length - maxHorVis;
-                } else if (curXLow < 0) {
-                    curXLow = 0;
-                }
+                temp = - (curXLow * scale);
             }
-            temp = - (curXLow * scale);
 
-            if ((curYLow > plY) || (plY >= (maxVertVis + curYLow))) {
-                if (plY < curYLow) {
-                    curYLow = curYLow - maxVertVis;
-                } else {
-                    curYLow = curYLow + maxVertVis;
+            if (maze.length <= maxVertVis) {
+                temp2 = frame.getHeight() - 130;
+                temp2 = (temp2 - (maze.length * scale)) / 2;
+            } else {
+                if ((curYLow > plY) || (plY >= (maxVertVis + curYLow))) {
+                    if (plY < curYLow) {
+                        curYLow = curYLow - maxVertVis;
+                    } else {
+                        curYLow = curYLow + maxVertVis;
+                    }
+                    if ((maxVertVis + curYLow) > (maze.length - 1)) {
+                        curYLow = maze.length - maxVertVis;
+                    } else if (curYLow < 0) {
+                        curYLow = 0;
+                    }
                 }
-                if ((maxVertVis + curYLow) > maze.length) {
-                    curYLow = maze.length - maxVertVis;
-                } else if (curYLow < 0) {
-                    curYLow = 0;
-                }
+                temp2 = - (curYLow * scale);
             }
-            temp2 = - (curYLow * scale);
 
             float s = Math.abs((acc % 50) / 50f - 0.5f);
 
             for (int i = curYLow; i < maze.length; i++) {
                 for (int j = curXLow; j < maze[0].length; j++) {
-                    if (j > (maxHorVis + curXLow)) break;
+                    if (j >= (maxHorVis + curXLow)) break;
                     pickColor(i, j, g);
                     int curX = temp + j * scale;
                     int curY = temp2 + i * scale;
@@ -852,12 +866,12 @@ public class PickingFrame extends JPanel implements ActionListener {
                         }
                     }
                 }
-                if (i > (maxVertVis + curYLow)) break;
+                if (i >= (maxVertVis + curYLow)) break;
             }
         }
 
         private void renderPlayer(Graphics g, int curX, int curY) {
-            if (contained) {
+            if (contained && showPath) {
                 float s = Math.abs((acc % 50) / 50f - 0.5f);
                 float red = Math.abs((1f - s) * curX / (float) getWidth() - 1f);
                 float green = Math.abs((1f - s) * curY / (float) getHeight() - 1f);

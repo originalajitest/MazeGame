@@ -92,7 +92,7 @@ public class StartFrame extends JPanel implements ActionListener {
         b1.setAlignmentX(Component.CENTER_ALIGNMENT);
         JsonReader reader = new JsonReader(data);
         try {
-            Map<String, Object> data = reader.read();//Checks if there is a save state to read from.
+            reader.read();//Checks if there is a save state to read from.
             b1.setEnabled(true);
         } catch (IOException e) {
             b1.setEnabled(false);
@@ -428,11 +428,7 @@ public class StartFrame extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String temp = (String) mazesCombo.getSelectedItem();
-                if ("Maze 8".equals(temp) || "Maze 9".equals(temp)) {
-                    b4.setEnabled(false);
-                } else {
-                    b4.setEnabled(true);
-                }
+                b4.setEnabled(!"Maze 8".equals(temp) && !"Maze 9".equals(temp));
             }
         });
 

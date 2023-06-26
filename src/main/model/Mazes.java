@@ -97,10 +97,8 @@ public class Mazes implements Writable {
         EventLog.getInstance().logEvent(new Event("Initializing mazes:"));
         mazes = new LinkedList<>();
         Maze mazeTemp;
-        int temp;
-        for (int i = 0; i < arrangement.size(); i++) {
-            temp = arrangement.get(i);
-            mazeTemp = new Maze(temp);
+        for (int integer : arrangement) {
+            mazeTemp = new Maze(integer);
             mazes.add(mazeTemp);
         }
     }
@@ -122,8 +120,8 @@ public class Mazes implements Writable {
     //EFFECTS: returns false if all mazes are solved otherwise true
     public boolean checkAllSolved() {
         int solvedCount = 0;
-        for (int i = 0; i < mazes.size(); i++) {
-            if (mazes.get(i).isSolved()) {
+        for (Maze maze : mazes) {
+            if (maze.isSolved()) {
                 solvedCount++;
             }
         }

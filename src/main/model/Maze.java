@@ -68,8 +68,8 @@ public class Maze extends Exception implements Writable {
     //EFFECTS: converts the String[][]maze to a JSON object.
     private JSONArray mazeToJson() {
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < maze.length; i++) {
-            jsonArray.put(maze[i]);
+        for (String[] row : maze) {
+            jsonArray.put(row);
         }
         return jsonArray;
     }

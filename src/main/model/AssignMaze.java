@@ -27,12 +27,12 @@ public class AssignMaze {
             {"F", "T", "F", "T", "T", "T"},
             {"T", "T", "T", "F", "F", "F"},
             {"T", "F", "T", "T", "T", null}};
-    private final String maze4ref = "/images/maze4.png";
-    private final String maze5ref = "/images/maze5.png";
-    private final String maze6ref = "/images/maze6.png";
-    private final String maze7ref = "/images/maze7.png";
-    private final String maze8ref = "/images/maze8.png";
-    private final String maze9ref = "/images/maze9.png";
+    protected final String maze4ref = "/images/maze4.png";
+    protected final String maze5ref = "/images/maze5.png";
+    protected final String maze6ref = "/images/maze6.png";
+    protected final String maze7ref = "/images/maze7.png";
+    protected final String maze8ref = "/images/maze8.png";
+    protected final String maze9ref = "/images/maze9.png";
 
     static Random rand = new Random();
 
@@ -152,8 +152,8 @@ public class AssignMaze {
                 }
             }
             boolean containsNull = false;
-            for (int i = 0; i < maze.length; i++) {
-                if (java.util.Arrays.asList(maze[i]).contains(null)) {
+            for (String[] row : maze) {
+                if (java.util.Arrays.asList(row).contains(null)) {
                     containsNull = true;
                     break;
                 }
@@ -268,7 +268,7 @@ public class AssignMaze {
             }
         }
         for (int i = 0; i < height + 1; i++) {
-            if (inpMaze[i][0].equals("T")) {
+            if ("T".equals(inpMaze[i][0])) {
                 inpMaze[i][0] = null;
             }
             if (inpMaze[i][width].equals("T")) {
