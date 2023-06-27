@@ -1,24 +1,47 @@
 # My Personal Project -- A Game
 
-## Current project
+### Video: <a href = "https://drive.google.com/file/d/10AsxG6Dy2s5fuUENSNG_ja4duaeirlAo/view?usp=sharing">MazeVideo</a>
 
-Current functionality:
+### Functionality:
 <ul>
-<li>Can load a new game or an old save</li>
-<li>Can go into any maze, but does not go into one that has been completed before.</li>
-<li>There is an ongoing timer that calculates how long to complete the mazes.</li>
-<li>You can change the color and this color change persists through mazes until changed.</li>
-<li>You can change the visibility limiting the number of blocks see-able around you (below 3, it assumes the visibility for path, otherwise then the program only allows 3 blocks around the path)</li>
+<li>Can start a new game or load an old save</li>
 <li>You can save the game state at any point.</li>
-<li>A cheat code has been implemented to solve a maze quickly and beat the game.</li>
-<li>You can change the mazes with new pictures. Given that a blocks have the same width and height as each other (and width == height), the program will be able to recognize the maze. It can have two cyan blocks to indicate the start and the end.</li>
-<li>Any changes made during the programs runtime are sotred in a log and this log outputs on exiting the program. This log does not persist through saving and loading data.</li>
+<li>Can go into any maze, but entry to mazes which have been completed before is denied.</li>
+</ul>
+
+### The following features are exclusive to the CLI version.
+<ul>
+<li>The user can make it possible to do a maze again on completion.</li>
+<li>The user gets an output stating the reason why an input is not acceptable.</li>
+<li>The user is only able to access the first 3 mazes</li>
+</ul>
+
+### The following features are exclusive to the GUI version. 
+<ul>
+<li>There is a global timer present to measure time-taken to complete all mazes.</li>
+<li>Changing the color of the walls is possible, this change persists through mazes until changed.</li>
+<li>The is also a wall texture in the colors bar.</li>
+<li>Can change visibility, hence limit the number of see-able blocks around the player (if visibility is below 3 the 
+path visibility is the same as the normal visibility, otherwise only 3 blocks around the path)</li>
+<li>A cheat code can be used to jump to the end of the current maze.</li>
+<li>A cheat code can be used to show a possible path to reach the end of the maze.</li>
+<li>You can change the mazes with new pictures. If the image meets some requirements, it will be correctly recognised
+as a maze, otherwise it will look like a mess :). Walls should be one color and the walkable path another color. The
+start can the end can be indicated by two cyan (00FFFF) blocks.</li>
+<li>The user can set the maze back to its original form as determined by the code.</li>
+<li>The user can also set the maze to a maze which can be solved quickly (by pressing right twice).</li>
+<li>The game waits for one input after clearing a maze to continue.</li>
+<li>Any changes made during the programs runtime are stored in a log which is outputted to the console on exiting
+the program. This log does not persist through saving and loading data.</li>
+<li>The console has a constant update on the frame rate of the program at that instant.</li>
 </ul>
 
 <br>
 References:
 <ul>
-<li> website for Maze 6 and Maze 7 (https://keesiemeijer.github.io/maze-generator/#generate) with inputs for Maze 6: (thickness-10; Columns-25; Rows-20; Entries-none)</li>
+<li> website for Maze 6, 7 and 8 (<a href = "https://keesiemeijer.github.io/maze-generator/#generate">
+https://keesiemeijer.github.io/maze-generator/#generate</a>) with inputs for Maze 6: (thickness-10; Columns-25;
+Rows-20; Entries-none)</li>
 </ul>
 
 ## Answering questions
@@ -222,18 +245,27 @@ Fri Apr 07 18:22:04 PDT 2023: 	All mazes solved.
 The design I made for the UML Class diagram is right, but it does not reflect the dependencies fully.
 Especially how the functions relate with each other and which they call in effect. 
 
-Now, in regards to improving my design, I would first try to get full code coverage for my tests (I think that it is currently a server side error and as such I am not able to get the ful 99.5 {the last 0.5 is not worth it}).
-Another improvement would be to move the visibility stuff to the model, so you would save it and then call it, and it would also be testable.
-Another big thing would be to decrease the various method line as I have one that is 106 line and try to keep them low by factoring out duplicate buttons (there are two, but they are in entirely different functions), this would move all buttons outside and will increase overall code length byt also increase readability.
+Now, in regard to improving my design, I would first try to get full code coverage for my tests (I think that it is
+currently a server side error and as such I am not able to get the ful 99.5 {the last 0.5 is not worth it}).
 
-I should also remove all debugging functions I used to ensure reliability and security of the program. I should also make all functions private and only accessible as the EventLog functions to improve security.
+Another improvement would be to move the visibility stuff to the model, so you would save it and then call it, and
+it would also be testable.
+
+Another big thing would be to decrease the various method line as I have one that is 106 line and try to keep them
+low by factoring out duplicate buttons (there are two, but they are in entirely different functions), this would move
+all buttons outside and will increase overall code length byt also increase readability.
+
+I should also remove all debugging functions I used to ensure reliability and security of the program. I should also
+make all functions private and only accessible as the EventLog functions to improve security.
+
 It would also be helpful to break down the Picking frame class into two separate classes to increase readability.
 Another one would be to save the timer so that we can add it later.
 
-Another interesting thing would be to make the walls with better textures instead of one solid color, and I plan to do this, but just don't have time currently.
+Another interesting thing would be to make the walls with better textures instead of one solid color, and I plan to
+do this, but just don't have time currently.
 
 <br>
-*I will  add more based on program completion and completion of stretch goals.*
+<!--*I will  add more based on program completion and completion of stretch goals.*?-->
 
 
-<!--An example of text with **bold** and *italic* fonts.>>  
+<!--An example of text with **bold** and *italic* fonts.-->

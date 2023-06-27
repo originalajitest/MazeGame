@@ -227,7 +227,7 @@ public class Main {
     //EFFECTS: returns true if inp is withing 1 and 6 (number of mazes).
     //Will change to accommodate how many mazes actually have a maze in them.
     private static boolean checkInp(int inp) {
-        if ((inp > 0) && (inp < 7)) {
+        if ((inp > 0) && (inp < 4)) {
             return false;
         } else {
             System.out.println("Input outside specified range.");

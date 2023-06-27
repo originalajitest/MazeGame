@@ -313,7 +313,7 @@ public class AssignMaze {
                     } else {
                         endX = j;
                         endY = i;
-                        ArrayDeque curPath = new ArrayDeque();
+                        Deque<AssignMaze.Point> curPath = new ArrayDeque<>();
                         if (recurse(startX, startY, new HashSet<>(), curPath)) {
                             leave = true;
                             break;
@@ -331,7 +331,7 @@ public class AssignMaze {
     }
 
     @SuppressWarnings("methodlength")
-    private boolean recurse(int startX, int startY, HashSet<Point> beenTo, ArrayDeque<Point> curPath) {
+    private boolean recurse(int startX, int startY, HashSet<Point> beenTo, Deque<Point> curPath) {
         Point left = new Point(startX - 1, startY);
         Point right = new Point(startX + 1, startY);
         Point up = new Point(startX, startY - 1);

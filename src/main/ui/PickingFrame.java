@@ -139,6 +139,17 @@ public class PickingFrame extends JPanel implements ActionListener {
             }
         });
 
+        setAbsolutes();
+
+        //Add content to the window.
+        running(frame.getContentPane());
+
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    private void setAbsolutes() {
         colors.add("black");
         colors.add("blue");
         colors.add("cyan");
@@ -158,13 +169,6 @@ public class PickingFrame extends JPanel implements ActionListener {
                 return false;
             }
         };
-
-        //Add content to the window.
-        running(frame.getContentPane());
-
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
     }
 
     //MODIFIES: this
@@ -247,52 +251,24 @@ public class PickingFrame extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String selection = (String) inputsCombo.getSelectedItem();
         if ("continue".equals(e.getActionCommand())) {
-            switch (selection) {
-                case "Maze 1":
-                    if (!mazes.checkSolved(arrange.indexOf(0))) {
-                        goToMazes(0);
-                    }
-                    break;
-                case "Maze 2":
-                    if (!mazes.checkSolved(arrange.indexOf(1))) {
-                        goToMazes(1);
-                    }
-                    break;
-                case "Maze 3":
-                    if (!mazes.checkSolved(arrange.indexOf(2))) {
-                        goToMazes(2);
-                    }
-                    break;
-                case "Maze 4":
-                    if (!mazes.checkSolved(arrange.indexOf(3))) {
-                        goToMazes(3);
-                    }
-                    break;
-                case "Maze 5":
-                    if (!mazes.checkSolved(arrange.indexOf(4))) {
-                        goToMazes(4);
-                    }
-                    break;
-                case "Maze 6":
-                    if (!mazes.checkSolved(arrange.indexOf(5))) {
-                        goToMazes(5);
-                    }
-                    break;
-                case "Maze 7":
-                    if (!mazes.checkSolved(arrange.indexOf(6))) {
-                        goToMazes(6);
-                    }
-                    break;
-                case "Maze 8":
-                    if (!mazes.checkSolved(arrange.indexOf(7))) {
-                        goToMazes(7);
-                    }
-                    break;
-                case "Maze 9":
-                    if (!mazes.checkSolved(arrange.indexOf(8))) {
-                        goToMazes(8);
-                    }
-                    break;
+            if (selection.equals("Maze 1") && !mazes.checkSolved(arrange.indexOf(0))) {
+                goToMazes(0);
+            } else if (selection.equals("Maze 2") && !mazes.checkSolved(arrange.indexOf(1))) {
+                goToMazes(1);
+            } else if (selection.equals("Maze 3") && !mazes.checkSolved(arrange.indexOf(2))) {
+                goToMazes(2);
+            } else if (selection.equals("Maze 4") && !mazes.checkSolved(arrange.indexOf(3))) {
+                goToMazes(3);
+            } else if (selection.equals("Maze 5") && !mazes.checkSolved(arrange.indexOf(4))) {
+                goToMazes(4);
+            } else if (selection.equals("Maze 6") && !mazes.checkSolved(arrange.indexOf(5))) {
+                goToMazes(5);
+            } else if (selection.equals("Maze 7") && !mazes.checkSolved(arrange.indexOf(6))) {
+                goToMazes(6);
+            } else if (selection.equals("Maze 8") && !mazes.checkSolved(arrange.indexOf(7))) {
+                goToMazes(7);
+            } else if (selection.equals("Maze 9") && !mazes.checkSolved(arrange.indexOf(8))) {
+                goToMazes(8);
             }
         } else if ("quit".equals(e.getActionCommand())) {
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
@@ -458,9 +434,10 @@ public class PickingFrame extends JPanel implements ActionListener {
         b1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
-        quit = new ImageIcon(getScaledImage(quit.getImage(), 19, 19));
+        quit = new ImageIcon(getScaledImage(quit.getImage(), 20, 20));
         JButton b2 = new JButton("Quit", quit);
         b2.setActionCommand("quit");
+        b2.setFont(font);
         b2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         b1.addActionListener(this);
@@ -576,96 +553,60 @@ public class PickingFrame extends JPanel implements ActionListener {
         }
     }
 
-    boolean hp = false;
-    boolean ep = false;
-    boolean sp = false;
-    boolean op = false;
-    boolean yp = false;
-    boolean ap = false;
+    private int skipCode = 0;
 
     //MODIFIES: this (mazes.mazes[index].player)
     //EFFECTS: cheat code ;)
     @SuppressWarnings("methodlength")
     private void cheat(int code) {
         if (code > 64 && code < 90) {
-            if (code == KeyEvent.VK_M && ap) {
+            if (code == KeyEvent.VK_M && skipCode == 6) {
                 mazes.quickSolve2(index);
                 frame.repaint();
-            } else if (code == KeyEvent.VK_A && yp) {
-                ap = true;
-                yp = false;
-            } else if (code == KeyEvent.VK_Y && op) {
-                yp = true;
-                op = false;
-            } else if (code == KeyEvent.VK_O && sp) {
-                op = true;
-                sp = false;
-            } else if (code == KeyEvent.VK_S && ep) {
-                sp = true;
-                ep = false;
-            } else if (code == KeyEvent.VK_E && hp) {
-                ep = true;
-                hp = false;
-            } else if (code == KeyEvent.VK_H) {
-                hp = true;
+            } else if (code == KeyEvent.VK_A && skipCode == 5) {
+                skipCode++;
+            } else if (code == KeyEvent.VK_Y && skipCode == 4) {
+                skipCode++;
+            } else if (code == KeyEvent.VK_O && skipCode == 3) {
+                skipCode++;
+            } else if (code == KeyEvent.VK_S && skipCode == 2) {
+                skipCode++;
+            } else if (code == KeyEvent.VK_E && skipCode == 1) {
+                skipCode++;
+            } else if (code == KeyEvent.VK_H && skipCode == 0) {
+                skipCode++;
             } else {
-                hp = false;
-                ep = false;
-                sp = false;
-                op = false;
-                yp = false;
-                ap = false;
+                skipCode = 0;
             }
         }
     }
 
-    boolean sp1 = false;
-    boolean hp1 = false;
-    boolean op1 = false;
-    boolean wp1 = false;
-    boolean dp1 = false;
-    boolean ap1 = false;
-    boolean wp2 = false;
-    boolean ap2 = false;
+    private int wayCode = 0;
 
     @SuppressWarnings("methodlength")
     private void cheat2(int code) {
         if ((code > 64 && code < 90) || code == 27) {
-            if (code == KeyEvent.VK_Y && ap2) {
+            if (code == KeyEvent.VK_Y && wayCode == 8) {
                 showPath = true;
-                ap2 = false;
-            } else if (code == KeyEvent.VK_A && wp2) {
-                ap2 = true;
-                wp2 = false;
-            } else if (code == KeyEvent.VK_W && ap1) {
-                wp2 = true;
-                ap1 = false;
-            } else if (code == KeyEvent.VK_A && dp1) {
-                ap1 = true;
-                dp1 = false;
-            } else if (code == KeyEvent.VK_D && wp1) {
-                dp1 = true;
-                wp1 = false;
-            } else if (code == KeyEvent.VK_W && op1) {
-                wp1 = true;
-                op1 = false;
-            } else if (code == KeyEvent.VK_O && hp1) {
-                op1 = true;
-                hp1 = false;
-            } else if (code == KeyEvent.VK_H && sp1) {
-                hp1 = true;
-                sp1 = false;
-            } else if (code == KeyEvent.VK_S) {
-                sp1 = true;
+                wayCode = 0;
+            } else if (code == KeyEvent.VK_A && wayCode == 7) {
+                wayCode++;
+            } else if (code == KeyEvent.VK_W && wayCode == 6) {
+                wayCode++;
+            } else if (code == KeyEvent.VK_A && wayCode == 5) {
+                wayCode++;
+            } else if (code == KeyEvent.VK_D && wayCode == 4) {
+                wayCode++;
+            } else if (code == KeyEvent.VK_W && wayCode == 3) {
+                wayCode++;
+            } else if (code == KeyEvent.VK_O && wayCode == 2) {
+                wayCode++;
+            } else if (code == KeyEvent.VK_H && wayCode == 1) {
+                wayCode++;
+            } else if (code == KeyEvent.VK_S && wayCode == 0) {
+                wayCode++;
             } else {
-                sp1 = false;
-                hp1 = false;
-                op1 = false;
-                wp1 = false;
-                dp1 = false;
-                ap1 = false;
-                wp2 = false;
-                ap2 = false;
+                wayCode = 0;
             }
             if (code == KeyEvent.VK_ESCAPE) {
                 showPath = false;
@@ -760,34 +701,9 @@ public class PickingFrame extends JPanel implements ActionListener {
             int temp2 = frame.getHeight() - 130;
             temp2 = (temp2 - (maze.length * scale)) / 2;
 
-            float s = Math.abs((acc % 50) / 50f - 0.5f);
-
             for (int i = 0; i < maze.length; i++) {
                 for (int j = 0; j < maze[0].length; j++) {
-                    pickColor(i, j, g);
-                    int curX = temp + j * scale;
-                    int curY = temp2 + i * scale;
-                    if (showPath) {
-                        if (dq.contains(new Point(j, i))) {
-                            float red = Math.abs((1f - s) * curX / (float) getWidth() - 1f);
-                            float green = Math.abs((1f - s) * curY / (float) getHeight() - 1f);
-                            float blue = Math.abs((red + green) / 2 - 1f);
-                            g.setColor(new Color(red, green, blue));
-                        }
-                    }
-                    if (j == plX && i == plY) {
-                        renderPlayer(g, curX, curY);
-                    } else {
-                        if (wall) {
-                            if (g.getColor().equals(color)) {
-                                paintWall(g, curX, curY);
-                            } else {
-                                g.fillRect(curX, curY, scale, scale);
-                            }
-                        } else {
-                            g.fillRect(curX, curY, scale, scale);
-                        }
-                    }
+                    printAll(g,i,j,temp,temp2);
                 }
             }
         }
@@ -796,11 +712,51 @@ public class PickingFrame extends JPanel implements ActionListener {
         private int curYLow = 0;
 
         private void printZoomMaze(Graphics g) {
-            int temp;
-            int temp2;
+            int temp = setStartX();
+            int temp2 = setStartY();
+
+            for (int i = curYLow; i < maze.length; i++) {
+                for (int j = curXLow; j < maze[0].length; j++) {
+                    if (j >= (maxHorVis + curXLow)) break;
+                    printAll(g,i,j,temp,temp2);
+                }
+                if (i >= (maxVertVis + curYLow)) break;
+            }
+        }
+
+        private void printAll(Graphics g, int i, int j, int temp, int temp2) {
+            float s = Math.abs((acc % 50) / 50f - 0.5f);
+            pickColor(i, j, g);
+            int curX = temp + j * scale;
+            int curY = temp2 + i * scale;
+            if (showPath) {
+                if (dq.contains(new Point(j, i))) {
+                    float red = Math.abs((1f - s) * curX / (float) getWidth() - 1f);
+                    float green = Math.abs((1f - s) * curY / (float) getHeight() - 1f);
+                    float blue = Math.abs((red + green) / 2 - 1f);
+                    g.setColor(new Color(red, green, blue));
+                }
+            }
+            if (j == plX && i == plY) {
+                renderPlayer(g, curX, curY);
+            } else {
+                if (wall) {
+                    if (g.getColor().equals(color)) {
+                        paintWall(g, curX, curY);
+                    } else {
+                        g.fillRect(curX, curY, scale, scale);
+                    }
+                } else {
+                    g.fillRect(curX, curY, scale, scale);
+                }
+            }
+        }
+
+        private int setStartX() {
+            int val;
             if (maze[0].length <= maxHorVis) {
-                temp = frame.getWidth() - 20;
-                temp = (temp - (maze[0].length * scale)) / 2;
+                val = frame.getWidth() - 20;
+                val = (val - (maze[0].length * scale)) / 2;
             } else {
                 if ((curXLow > plX) || (plX >= (maxHorVis + curXLow))) {
                     if (plX < curXLow) {
@@ -814,12 +770,16 @@ public class PickingFrame extends JPanel implements ActionListener {
                         curXLow = 0;
                     }
                 }
-                temp = - (curXLow * scale);
+                val = - (curXLow * scale);
             }
+            return val;
+        }
 
+        private int setStartY() {
+            int val;
             if (maze.length <= maxVertVis) {
-                temp2 = frame.getHeight() - 130;
-                temp2 = (temp2 - (maze.length * scale)) / 2;
+                val = frame.getHeight() - 130;
+                val = (val - (maze.length * scale)) / 2;
             } else {
                 if ((curYLow > plY) || (plY >= (maxVertVis + curYLow))) {
                     if (plY < curYLow) {
@@ -833,41 +793,9 @@ public class PickingFrame extends JPanel implements ActionListener {
                         curYLow = 0;
                     }
                 }
-                temp2 = - (curYLow * scale);
+                val = - (curYLow * scale);
             }
-
-            float s = Math.abs((acc % 50) / 50f - 0.5f);
-
-            for (int i = curYLow; i < maze.length; i++) {
-                for (int j = curXLow; j < maze[0].length; j++) {
-                    if (j >= (maxHorVis + curXLow)) break;
-                    pickColor(i, j, g);
-                    int curX = temp + j * scale;
-                    int curY = temp2 + i * scale;
-                    if (showPath) {
-                        if (dq.contains(new Point(j, i))) {
-                            float red = Math.abs((1f - s) * curX / (float) getWidth() - 1f);
-                            float green = Math.abs((1f - s) * curY / (float) getHeight() - 1f);
-                            float blue = Math.abs((red + green) / 2 - 1f);
-                            g.setColor(new Color(red, green, blue));
-                        }
-                    }
-                    if (j == plX && i == plY) {
-                        renderPlayer(g, curX, curY);
-                    } else {
-                        if (wall) {
-                            if (g.getColor().equals(color)) {
-                                paintWall(g, curX, curY);
-                            } else {
-                                g.fillRect(curX, curY, scale, scale);
-                            }
-                        } else {
-                            g.fillRect(curX, curY, scale, scale);
-                        }
-                    }
-                }
-                if (i >= (maxVertVis + curYLow)) break;
-            }
+            return val;
         }
 
         private void renderPlayer(Graphics g, int curX, int curY) {
