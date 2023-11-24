@@ -3,7 +3,6 @@ package model;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -27,12 +26,12 @@ public class AssignMaze {
             {"F", "T", "F", "T", "T", "T"},
             {"T", "T", "T", "F", "F", "F"},
             {"T", "F", "T", "T", "T", null}};
-    protected final String maze4ref = "/images/maze4.png";
-    protected final String maze5ref = "/images/maze5.png";
-    protected final String maze6ref = "/images/maze6.png";
-    protected final String maze7ref = "/images/maze7.png";
-    protected final String maze8ref = "/images/maze8.png";
-    protected final String maze9ref = "/images/maze9.png";
+    protected final String maze4ref = "/maze4.png";
+    protected final String maze5ref = "/maze5.png";
+    protected final String maze6ref = "/maze6.png";
+    protected final String maze7ref = "/maze7.png";
+    protected final String maze8ref = "/maze8.png";
+    protected final String maze9ref = "/maze9.png";
 
     static Random rand = new Random();
 
@@ -97,7 +96,7 @@ public class AssignMaze {
     //EFFECTS: returns @D string array based on input maze via ref
     public String[][] convToMaze(String ref, int w, int h) {
         try {
-            BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + ref));
+            BufferedImage inp = ImageIO.read(getClass().getResource(ref));
             BufferedImage scaledImg = (BufferedImage) getScaledImage(inp,w,h);
 //            ImageIO.write(scaledImg, "png", new File(System.getProperty("user.dir")
 //                    + "/images/maze6Test.png"));
@@ -130,7 +129,7 @@ public class AssignMaze {
     @SuppressWarnings("methodlength")
     public String[][] convToMaze(String ref) {
         try {
-            BufferedImage inp = ImageIO.read(new File(System.getProperty("user.dir") + ref));
+            BufferedImage inp = ImageIO.read(getClass().getResource(ref));
             setScale(inp);
 
             int w = (int) Math.ceil((double) inp.getWidth() / (double) scale);

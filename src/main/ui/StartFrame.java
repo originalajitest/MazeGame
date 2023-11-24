@@ -6,16 +6,21 @@ import model.ImageFilter;
 import model.Mazes;
 import persistence.JsonReader;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import java.util.concurrent.TimeUnit;
 
 //This is where the user picks where to go into a new game or an old saved game state.
 public class StartFrame extends JPanel implements ActionListener {
@@ -41,8 +46,7 @@ public class StartFrame extends JPanel implements ActionListener {
     JLabel picImg;
 
     final String[] mazesStr = {"Maze 4", "Maze 5", "Maze 6", "Maze 7", "Maze 8", "Maze 9"};
-    final String[] mazeRefs = {"/images/maze4.png", "/images/maze5.png", "/images/maze6.png",
-            "/images/maze7.png", "/images/maze8.png", "/images/maze9.png"};
+    final String[] mazeRefs = {"images/maze4.png", "images/maze5.png", "images/maze6.png", "images/maze7.png", "images/maze8.png", "images/maze9.png"};
     final String[] mazeOriginals = {"/images/original/maze4.png", "/images/original/maze5.png",
             "/images/original/maze6.png", "/images/original/maze7.png"};
     JComboBox<String> mazesCombo;
@@ -74,13 +78,13 @@ public class StartFrame extends JPanel implements ActionListener {
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
-        ImageIcon load = new ImageIcon(System.getProperty("user.dir") + "/images/assets/load.png");
+        ImageIcon load = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/load.png")));
         load = new ImageIcon(getScaledImage(load.getImage(), w, h));
-        ImageIcon newGame = new ImageIcon(System.getProperty("user.dir") + "/images/assets/new.png");
+        ImageIcon newGame = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/new.png")));
         newGame = new ImageIcon(getScaledImage(newGame.getImage(), w, h));
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
+        ImageIcon quit = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/quit.png")));
         quit = new ImageIcon(getScaledImage(quit.getImage(), w, h));
-        ImageIcon edit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/edit.png");
+        ImageIcon edit = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/edit.png")));
         edit = new ImageIcon(getScaledImage(edit.getImage(), w, h));
 
         JPanel panel = new JPanel();
@@ -211,8 +215,28 @@ public class StartFrame extends JPanel implements ActionListener {
             String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
-                ImageIO.write(ImageIO.read(file), "png", new File(System.getProperty("user.dir")
-                        + mazeRefs[index]));
+//                ImageIO.write(ImageIO.read(file), "png", new File(getClass().getResource(mazeRefs[index]).toString())); //Not worling !!!
+//                ImageIO.write(ImageIO.read(file), "png", new File(String.valueOf(System.class.getResource(mazeRefs[index]))));
+                System.out.println("Before resource.");
+                String resourcesPath = getClass().getClassLoader().getResource("maze9.png").getPath();
+                System.out.println("Before temp\t:" + resourcesPath);
+//                resourcesPath = resourcesPath + mazeRefs[index];
+                System.out.println("temp \t:" + resourcesPath);
+                File abc = new File(resourcesPath);
+                Files.delete(Paths.get(resourcesPath));
+                System.out.println("File deleted hopefully");
+                try{
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException ea){
+                    System.out.println(ea);
+                }
+                File temp = new File(resourcesPath);
+                System.out.println("Trying to put new file.");
+                // Making the folders' recourse root has messed up the file saving interaction.
+                System.out.println("Past temp");
+                ImageIO.write((BufferedImage) ImageIO.read(file), "png", temp);
+//                ImageIO.write(ImageIO.read(file), "png", (Stream) getClass().getResourceAsStream("/maze8.png"));
+//                ImageIO.write(ImageIO.read(file), "png", new File(System.getProperty("user.dir") + "/maze8.png"));
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
             }
@@ -333,11 +357,11 @@ public class StartFrame extends JPanel implements ActionListener {
         int ph = 160;
         Dimension buDimension = new Dimension(180, 30);
 
-        ImageIcon newGame = new ImageIcon(System.getProperty("user.dir") + "/images/assets/new.png");
+        ImageIcon newGame = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/new.png")));
         newGame = new ImageIcon(getScaledImage(newGame.getImage(), w, h));
-        ImageIcon open = new ImageIcon(System.getProperty("user.dir") + "/images/assets/open.png");
+        ImageIcon open = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/open.png")));
         open = new ImageIcon(getScaledImage(open.getImage(), w, h));
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
+        ImageIcon quit = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/quit.png")));
         quit = new ImageIcon(getScaledImage(quit.getImage(), w, h));
 
         b1 = new JButton("Continue to Game", newGame);

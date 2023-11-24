@@ -158,10 +158,10 @@ public class PickingFrame extends JPanel implements ActionListener {
         colors.add("yellow");
         colors.add("magenta");
 
-        imgWall = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall.png")).getImage();
-        imgWall1 = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall1.png")).getImage();
-        imgWall2 = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall2.png")).getImage();
-        imgWall3 = (new ImageIcon(System.getProperty("user.dir") + "/images/assets/wall3.png")).getImage();
+        imgWall = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/wall.png"))).getImage();
+        imgWall1 = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/wall1.png"))).getImage();
+        imgWall2 = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/wall2.png"))).getImage();
+        imgWall3 = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/wall3.png"))).getImage();
 
         imgObserve = new ImageObserver() {
             @Override
@@ -220,7 +220,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         panel.setPreferredSize(new Dimension(100, 130));
         panel.setMaximumSize(new Dimension(100, 130));
 
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
+        ImageIcon quit = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/quit.png")));
         quit = new ImageIcon(getScaledImage(quit.getImage(), 20, 20));
 
         inputsCombo = new JComboBox<>(inputs);
@@ -433,7 +433,7 @@ public class PickingFrame extends JPanel implements ActionListener {
         b1.setActionCommand("save");
         b1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        ImageIcon quit = new ImageIcon(System.getProperty("user.dir") + "/images/assets/quit.png");
+        ImageIcon quit = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/quit.png")));
         quit = new ImageIcon(getScaledImage(quit.getImage(), 20, 20));
         JButton b2 = new JButton("Quit", quit);
         b2.setActionCommand("quit");
@@ -741,7 +741,7 @@ public class PickingFrame extends JPanel implements ActionListener {
                 renderPlayer(g, curX, curY);
             } else {
                 if (wall) {
-                    if (g.getColor().equals(color)) {
+                    if (g.getColor().equals(color) && maze[i][j] == "F" && !vis(i,j)) {
                         paintWall(g, curX, curY);
                     } else {
                         g.fillRect(curX, curY, scale, scale);
@@ -911,20 +911,11 @@ public class PickingFrame extends JPanel implements ActionListener {
 
             if (!visibility.equals("@A")) {
                 try {
-                    boolean black = true;
-                    int vis = Integer.parseInt(visibility);
+                    boolean black = vis(i,j);
                     double dist1 = Math.sqrt(Math.pow((plX - j), 2) + Math.pow((plY - i), 2));
                     double dist2 = Math.sqrt(Math.pow((startX - j), 2) + Math.pow((startY - i), 2));
                     double dist3 = Math.sqrt(Math.pow((endX - j), 2) + Math.pow((endY - i), 2));
-                    for (Map<String, Integer> move : moves) {
-                        double distMoves = Math.sqrt(Math.pow((move.get("posX") - j), 2)
-                                + Math.pow((move.get("posY") - i), 2));
-                        int maxVis = Math.min(vis,3);
-                        if (distMoves < maxVis) {
-                            black = false;
-                            break;
-                        }
-                    }
+                    int vis = Integer.parseInt(visibility);
                     if ((dist1 > (double) vis) && (dist2 > fixedDist) && (dist3 > fixedDist) && black) {
                         g.setColor(Color.black);
                     }
@@ -933,6 +924,20 @@ public class PickingFrame extends JPanel implements ActionListener {
                 }
             }
         }
+
+        private boolean vis(int i, int j) {
+            int vis = Integer.parseInt(visibility);
+            for (Map<String, Integer> move : moves) {
+                double distMoves = Math.sqrt(Math.pow((move.get("posX") - j), 2)
+                        + Math.pow((move.get("posY") - i), 2));
+                int maxVis = Math.min(vis,3);
+                if (distMoves < maxVis) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
 
     //Handles key Inputs used to move the player and everything else
