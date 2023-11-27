@@ -926,7 +926,11 @@ public class PickingFrame extends JPanel implements ActionListener {
         }
 
         private boolean vis(int i, int j) {
+            if (visibility=="@A") return false;
             int vis = Integer.parseInt(visibility);
+            if (Math.sqrt(Math.pow((plX - j),2) + Math.pow((plY - i),2)) < vis) {
+                return false;
+            }
             for (Map<String, Integer> move : moves) {
                 double distMoves = Math.sqrt(Math.pow((move.get("posX") - j), 2)
                         + Math.pow((move.get("posY") - i), 2));
