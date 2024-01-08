@@ -21,7 +21,7 @@ import java.util.*;
 public class PickingFrame extends JPanel implements ActionListener {
 
     private static JsonWriter jsonWriter;
-    private static final String data = "./data/saveState.json";
+    private static final String data = "saveState.json";
 
     Mazes mazes;
     ArrayList<Integer> arrange;

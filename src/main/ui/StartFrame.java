@@ -14,13 +14,15 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 //This is where the user picks where to go into a new game or an old saved game state.
 public class StartFrame extends JPanel implements ActionListener {
@@ -35,7 +37,7 @@ public class StartFrame extends JPanel implements ActionListener {
     static Mazes mazes;
     static ArrayList<Integer> arrangement = new ArrayList<>();
 
-    private static final String data = "./data/saveState.json";
+    private static final String data = "saveState.json";
     static JsonReader jsonReader;
 
     JFrame frame;
@@ -46,9 +48,9 @@ public class StartFrame extends JPanel implements ActionListener {
     JLabel picImg;
 
     final String[] mazesStr = {"Maze 4", "Maze 5", "Maze 6", "Maze 7", "Maze 8", "Maze 9"};
-    final String[] mazeRefs = {"images/maze4.png", "images/maze5.png", "images/maze6.png", "images/maze7.png", "images/maze8.png", "images/maze9.png"};
-    final String[] mazeOriginals = {"/images/original/maze4.png", "/images/original/maze5.png",
-            "/images/original/maze6.png", "/images/original/maze7.png"};
+    final String[] mazeRefs = {"maze4.png", "maze5.png", "maze6.png", "maze7.png", "maze8.png", "maze9.png"};
+    final String[] mazeOriginals = {"/original/maze4.png", "/original/maze5.png",
+            "/original/maze6.png", "/original/maze7.png"};
     JComboBox<String> mazesCombo;
 
     Long time;
@@ -182,15 +184,19 @@ public class StartFrame extends JPanel implements ActionListener {
         if (e.getActionCommand().equals("load")) {
             loadState();
             move = true;
+
         } else if (e.getActionCommand().equals("newGame")) {
             defaultInitialize();
             move = true;
+
         } else if (e.getActionCommand().equals("edit")) {
             frame.setEnabled(false);
             frame.setVisible(false);
             new StartFrame(3);
+
         } else if (e.getActionCommand().equals("quit")) {
             System.exit(0);
+
         } else if (e.getActionCommand().equals("open")) {
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -211,33 +217,15 @@ public class StartFrame extends JPanel implements ActionListener {
                 EventLog.getInstance().logEvent(new Event("Open command cancelled by user."));
             }
             log.setCaretPosition(log.getDocument().getLength());
+
         } else if (e.getActionCommand().equals("replace")) {
             String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
-//                ImageIO.write(ImageIO.read(file), "png", new File(getClass().getResource(mazeRefs[index]).toString())); //Not worling !!!
-//                ImageIO.write(ImageIO.read(file), "png", new File(String.valueOf(System.class.getResource(mazeRefs[index]))));
-                System.out.println("Before resource.");
-                String resourcesPath = getClass().getClassLoader().getResource("maze9.png").getPath();
-                System.out.println("Before temp\t:" + resourcesPath);
-//                resourcesPath = resourcesPath + mazeRefs[index];
-                System.out.println("temp \t:" + resourcesPath);
-                File abc = new File(resourcesPath);
-                Files.delete(Paths.get(resourcesPath));
-                System.out.println("File deleted hopefully");
-                try{
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException ea){
-                    System.out.println(ea);
-                }
-                File temp = new File(resourcesPath);
-                System.out.println("Trying to put new file.");
-                // Making the folders' recourse root has messed up the file saving interaction.
-                System.out.println("Past temp");
-                ImageIO.write((BufferedImage) ImageIO.read(file), "png", temp);
-//                ImageIO.write(ImageIO.read(file), "png", (Stream) getClass().getResourceAsStream("/maze8.png"));
-//                ImageIO.write(ImageIO.read(file), "png", new File(System.getProperty("user.dir") + "/maze8.png"));
-            } catch (IOException ex) {
+                URI root = Objects.requireNonNull(getClass().getClassLoader().getResource("")).toURI();
+                File destination = new File(loc(root), mazeRefs[index]);
+                Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException | URISyntaxException ex) {
                 System.out.println(ex.getMessage());
             }
             img = new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB);
@@ -246,30 +234,37 @@ public class StartFrame extends JPanel implements ActionListener {
             log.append(replace + " replaced with user image.\n");
             log.setCaretPosition(log.getDocument().getLength());
             EventLog.getInstance().logEvent(new Event(replace + " replaced with user image."));
+
         } else if (e.getActionCommand().equals("empty")) {
             String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
-                ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + "/images/assets/blank.png")),
-                        "png", new File(System.getProperty("user.dir") + mazeRefs[index]));
-            } catch (IOException ex) {
+                URI root = Objects.requireNonNull(getClass().getClassLoader().getResource("")).toURI();
+                File destination = new File(loc(root), mazeRefs[index]);
+                File blank = loc(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/blank.png")).toURI());
+                Files.copy(blank.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException | URISyntaxException ex) {
                 System.out.println(ex.getMessage());
             }
             log.append(replace + " set to Blank Maze.\n");
             log.setCaretPosition(log.getDocument().getLength());
             EventLog.getInstance().logEvent(new Event(replace + " set to Blank Maze."));
+
         } else if (e.getActionCommand().equals("original")) {
             String replace = (String) mazesCombo.getSelectedItem();
             int index = java.util.Arrays.asList(mazesStr).indexOf(replace);
             try {
-                ImageIO.write(ImageIO.read(new File(System.getProperty("user.dir") + mazeOriginals[index])),
-                        "png", new File(System.getProperty("user.dir") + mazeRefs[index]));
-            } catch (IOException ex) {
+                URI root = Objects.requireNonNull(getClass().getClassLoader().getResource("")).toURI();
+                File destination = new File(loc(root), mazeRefs[index]);
+                File original = new File(loc(root), mazeOriginals[index]);
+                Files.copy(original.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException | URISyntaxException ex) {
                 System.out.println(ex.getMessage());
             }
             log.append(replace + " set to Original " + replace + ".\n");
             log.setCaretPosition(log.getDocument().getLength());
             EventLog.getInstance().logEvent(new Event(replace + " set to Original " + replace + "."));
+
         }
         if (move) {
             frame.setEnabled(false);
@@ -280,6 +275,10 @@ public class StartFrame extends JPanel implements ActionListener {
                 new PickingFrame(mazes, arrangement);
             }
         }
+    }
+
+    private File loc(URI root) {
+        return Paths.get(root).toFile();
     }
 
     /**
@@ -390,6 +389,7 @@ public class StartFrame extends JPanel implements ActionListener {
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.addChoosableFileFilter(new ImageFilter());
         fc.setAcceptAllFileFilterUsed(false);
+        fc.changeToParentDirectory();
 
         img = new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB);
 

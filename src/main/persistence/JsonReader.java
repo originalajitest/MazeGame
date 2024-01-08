@@ -1,15 +1,18 @@
 package persistence;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import model.Maze;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class JsonReader {
     private final String source;
@@ -28,11 +31,21 @@ public class JsonReader {
 
     // EFFECTS: reads source file as string and returns it
     private String readFile(String source) throws IOException {
-        StringBuilder contentBuilder = new StringBuilder();
-        try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {
-            stream.forEach(s -> contentBuilder.append(s));
+
+        try {
+            // Get the root URI of the resources
+            Path resourceRootPath = Paths.get(JsonReader.class.getClassLoader().getResource("").toURI());
+
+            // Create a File object for the source location
+            File sourceFile = new File(resourceRootPath.toFile(), source);
+
+            // Use Jackson ObjectMapper to read JSON from file
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readTree(sourceFile).toString();
+        } catch (IOException | java.net.URISyntaxException e) {
+            e.printStackTrace();
+            return null;
         }
-        return contentBuilder.toString();
     }
 
     // EFFECTS: parses Mazes from JSON object and returns it

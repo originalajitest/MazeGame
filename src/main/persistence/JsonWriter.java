@@ -2,10 +2,14 @@ package persistence;
 
 import model.Mazes;
 import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class JsonWriter {
     private static final int TAB = 4;
@@ -13,7 +17,8 @@ public class JsonWriter {
     private final String destination;
 
     // EFFECTS: constructs writer to write to destination file
-    public JsonWriter(String destination) {
+    public JsonWriter(String destination)
+    {
         this.destination = destination;
     }
 
@@ -45,7 +50,22 @@ public class JsonWriter {
     // MODIFIES: this
     // EFFECTS: writes string to file
     private void saveToFile(String json) {
-        writer.print(json);
+//        writer.print(json);
+
+        try {
+            // Get the root URI of the resources
+            Path resourceRootPath = Paths.get(JsonWriter.class.getClassLoader().getResource("").toURI());
+
+            // Create a File object for the destination location
+            File destinationFile = new File(resourceRootPath.toFile(), destination);
+
+            // Use Jackson ObjectMapper to write JSON to file
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(destinationFile, objectMapper.readTree(json));
+            System.out.println("JSON written to: " + destinationFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
