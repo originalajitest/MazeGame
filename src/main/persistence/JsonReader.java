@@ -30,11 +30,16 @@ public class JsonReader {
     }
 
     // EFFECTS: reads source file as string and returns it
-    private String readFile(String source) throws IOException {
+    private String readFile(String source) throws IOException{
 
         try {
             // Get the root URI of the resources
             Path resourceRootPath = Paths.get(JsonReader.class.getClassLoader().getResource("").toURI());
+//            System.out.println(JsonReader.class.getResource("").toString());
+//            System.out.println(JsonReader.class.getClassLoader().getParent().getClass().getClassLoader().getResource("").toString());
+//            Path resourceRootPath = Paths.get(JsonReader.class.getResource("").toURI());
+//            System.out.println(resourceRootPath);
+//            System.out.println("");
 
             // Create a File object for the source location
             File sourceFile = new File(resourceRootPath.toFile(), source);
@@ -42,9 +47,9 @@ public class JsonReader {
             // Use Jackson ObjectMapper to read JSON from file
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readTree(sourceFile).toString();
-        } catch (IOException | java.net.URISyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new IOException();
         }
     }
 
